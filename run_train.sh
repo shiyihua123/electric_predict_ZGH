@@ -73,8 +73,10 @@ INSURED_TIME=0
 # 预测小时数（5天 = 120小时）
 TARGET_HOURS=1056
 
-# 外部外生变量（SE3 电价）
+# 外部外生变量（SE3 / SE1 / SE4 电价，不指定则不加）
 EXOG_SE3_CSV="sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE1_CSV="sourceData/SE1_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE4_CSV="sourceData/SE4_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 
 # ==============================================================================
 # 5. 模型配置
@@ -167,12 +169,24 @@ fi
 mkdir -p "$OUT_DIR"
 echo "已创建输出目录: $OUT_DIR"
 
-# 构建外生变量配置
-EXOG_CONFIGS="[]"
-if [ -n "$EXOG_SE3_CSV" ]; then
-    EXOG_CONFIGS='[{"csv_path":"'"$EXOG_SE3_CSV"'","name":"SE3"}]'
-    echo "外部外生变量: $EXOG_SE3_CSV"
-fi
+# 用 Python 动态构建外生变量配置 JSON（仅添加文件存在的变量）
+EXOG_CONFIGS=$(python3 -c "
+import json, os
+PROJECT_DIR = '$PROJECT_DIR'
+configs = []
+for path, name in [
+    ('$EXOG_SE3_CSV', 'SE3'),
+    ('$EXOG_SE1_CSV', 'SE1'),
+    ('$EXOG_SE4_CSV', 'SE4'),
+]:
+    if not path:
+        continue
+    p = os.path.join(PROJECT_DIR, path) if not path.startswith('/') else path
+    if os.path.isfile(p):
+        configs.append({'csv_path': p, 'name': name})
+print(json.dumps(configs))
+")
+echo "外部外生变量: $(echo "$EXOG_CONFIGS" | python3 -c "import json,sys; cf=json.load(sys.stdin); print([c['name'] for c in cf] if cf else '无')" 2>/dev/null)"
 
 # 启动训练
 python $TRAIN_SCRIPT \

@@ -124,11 +124,22 @@ fi
 source "$VENV_DIR/bin/activate"
 
 # 构建外生变量配置
-EXOG_CONFIGS="[]"
-if [ -n "$EXOG_SE3_CSV" ]; then
-    EXOG_CONFIGS='[{"csv_path":"'"$EXOG_SE3_CSV"'","name":"SE3"}]'
-    echo "外部外生变量: $EXOG_SE3_CSV"
-fi
+# 用 Python 动态构建外生变量配置 JSON（仅添加文件存在的变量）
+EXOG_CONFIGS=$(python3 -c "
+import json, os
+PROJECT_DIR = '$PROJECT_DIR'
+configs = []
+for path, name in [
+    ('$EXOG_SE3_CSV', 'SE3'),
+]:
+    if not path:
+        continue
+    p = os.path.join(PROJECT_DIR, path) if not path.startswith('/') else path
+    if os.path.isfile(p):
+        configs.append({'csv_path': p, 'name': name})
+print(json.dumps(configs))
+")
+echo "外部外生变量: $(echo "$EXOG_CONFIGS" | python3 -c "import json,sys; cf=json.load(sys.stdin); print([c['name'] for c in cf] if cf else '无')" 2>/dev/null)"
 
 $PYTHON_ENV "$COMPARE_SCRIPT" \
     --pred_csv "$PRED_CSV" \
