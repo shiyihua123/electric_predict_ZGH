@@ -16,6 +16,8 @@
 # 1. 基础配置
 # ==============================================================================
 
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # 对比脚本路径
 COMPARE_SCRIPT="./compare_predictions.py"
 
