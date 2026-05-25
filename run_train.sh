@@ -84,9 +84,9 @@ EXOG_SE2_SOLAR_CSV="sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/
 EXOG_SE2_CONSUMPTION_CSV="sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.csv"
 EXOG_SE2_HYDRO_CSV="sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
 EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest.csv"
+# EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest.csv"
 EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest.csv"
+# EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest.csv"
 EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 # ==============================================================================
 # 5. 模型配置

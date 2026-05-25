@@ -16,22 +16,6 @@ import numpy as np
 import pandas as pd
 
 
-def _infer_freq_minutes(series: pd.Series) -> float:
-    diffs = series.diff().dropna()
-    if diffs.empty:
-        return 60.0
-    return diffs.dt.total_seconds().min() / 60.0
-
-
-def _resample_to_hourly(df: pd.DataFrame, feat_col: str) -> pd.DataFrame:
-    df = df.set_index("ds_utc")
-    df = df[[feat_col]].copy()
-    df = df.resample("h").mean()
-    df[feat_col] = df[feat_col].interpolate(method="time").ffill().bfill()
-    df = df.reset_index()
-    return df
-
-
 def load_exog_csv(
     csv_path: str,
     name: str,
@@ -95,10 +79,6 @@ def load_exog_csv(
     df = df.dropna(subset=["ds_utc"])
     df = df.drop_duplicates(subset=["ds_utc"], keep="last")
     df = df.sort_values("ds_utc").reset_index(drop=True)
-
-    freq_min = _infer_freq_minutes(df["ds_utc"])
-    if freq_min < 55:
-        df = _resample_to_hourly(df, feat_col)
 
     return df
 
@@ -209,13 +189,9 @@ class ExogenousLoader:
         base_ds_utc: pd.DatetimeIndex,
     ) -> pd.DatetimeIndex:
         """
-        找到所有外生变量与基准数据的共同时间覆盖范围
+        取所有外生变量与基准数据的共同时间覆盖范围
 
-        取所有变量 first_valid 的 max 和 last_valid 的 min，
-        裁剪 base_ds_utc 到该范围。超出范围的数据没有外生变量支持。
-
-        返回：
-            裁剪后的 DatetimeIndex
+        返回裁剪后的 DatetimeIndex，仅保留所有变量都有数据的时间段
         """
         valid_mask = pd.Series(True, index=base_ds_utc)
 
@@ -240,8 +216,8 @@ class ExogenousLoader:
 
         n_removed = len(base_ds_utc) - len(trimmed)
         print(
-            f"[外生变量对齐] 裁剪了 {n_removed} 个时间点（超出所有外生变量共同覆盖范围），"
-            f"剩余 {len(trimmed)} 行，范围: {trimmed[0]} ~ {trimmed[-1]}"
+            f"[外生变量对齐] 裁剪了 {n_removed} 个时间点，"
+            f"剩余 {len(trimmed)} 行 ({trimmed[0]} ~ {trimmed[-1]})"
         )
         return trimmed
 
@@ -254,11 +230,11 @@ class ExogenousLoader:
         加载所有外生变量，对齐到基准时间索引
 
         参数：
-            base_ds_utc: 基准 UTC 时间索引（建议先用 find_common_range 裁剪）
+            base_ds_utc: 基准 UTC 时间索引
             missing_strategy: 缺失值处理策略
 
         返回：
-            DataFrame，列名为 feat_{name}，行数与 base_ds_utc 一致
+            DataFrame，索引与 base_ds_utc 对齐，列为 feat_{name}
         """
         result = pd.DataFrame({"ds_utc": base_ds_utc})
 
