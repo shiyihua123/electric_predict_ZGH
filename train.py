@@ -263,7 +263,7 @@ def run_cv_for_split(
     )
 
     cv_raw = cv_raw.reset_index(drop=True)
-    cv_raw.to_csv(out_dir / f"cv_predictions_raw_{split_name}.csv", index=False)
+    # cv_raw.to_csv(out_dir / f"cv_predictions_raw_{split_name}.csv", index=False)
 
     # 构建发布时间到目标开始天数的映射
     target_start_days_dict = dict(zip(args.issued_hours_local, args.target_start_days_list))

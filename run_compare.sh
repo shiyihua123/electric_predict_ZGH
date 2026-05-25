@@ -43,8 +43,12 @@ INSURED_TIME=0
 # 真实电价数据文件
 ACTUAL_CSV="./sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 
-# 外部外生变量（SE3 电价）
+# 外部外生变量
 EXOG_SE3_CSV=""
+EXOG_SE1_CSV=""
+EXOG_SE4_CSV=""
+EXOG_SE2_WIND_CSV=""
+EXOG_SE2_SOLAR_CSV=""
 
 # ==============================================================================
 # 3. 数据列配置（自动检测，一般不需要修改）
@@ -119,9 +123,6 @@ if [ ! -f "$ACTUAL_CSV" ]; then
     exit 1
 fi
 
-# 激活虚拟环境并运行对比脚本
-source "$VENV_DIR/bin/activate"
-
 # 构建外生变量配置
 # 用 Python 动态构建外生变量配置 JSON（仅添加文件存在的变量）
 EXOG_CONFIGS=$(python3 -c "
@@ -130,6 +131,10 @@ PROJECT_DIR = '$PROJECT_DIR'
 configs = []
 for path, name in [
     ('$EXOG_SE3_CSV', 'SE3'),
+    ('$EXOG_SE1_CSV', 'SE1'),
+    ('$EXOG_SE4_CSV', 'SE4'),
+    ('$EXOG_SE2_WIND_CSV', 'SE2_WIND'),
+    ('$EXOG_SE2_SOLAR_CSV', 'SE2_SOLAR'),
 ]:
     if not path:
         continue

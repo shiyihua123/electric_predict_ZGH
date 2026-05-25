@@ -27,6 +27,8 @@ ISSUED_DATE="$(date +%Y-%m-%d)"
 EXOG_SE3_CSV="sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 EXOG_SE1_CSV="sourceData/SE1_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 EXOG_SE4_CSV="sourceData/SE4_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE2_WIND_CSV="sourceData/SE2_Wind_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SOLAR_CSV="sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/MW_latest.csv"
 OUT_CSV=""
 
 # ========== 解析命令行参数 ==========
@@ -58,7 +60,9 @@ print_help() {
   外生变量:
     --exog_se3_csv PATH        SE3 电价数据文件路径
     --exog_se1_csv PATH        SE1 电价数据文件路径
-    --exog_se4_csv PATH        SE4 电价数据文件路径 (不指定则不加该外生变量)
+    --exog_se4_csv PATH        SE4 电价数据文件路径
+    --exog_se2_wind_csv PATH   SE2 风电数据文件路径
+    --exog_se2_solar_csv PATH  SE2 太阳能数据文件路径 (不指定则不加该外生变量)
 
   输出参数:
     --out_csv PATH             输出 CSV 路径 (默认: outputs/predict_results/predict_issued_XX_XXXh.csv)
@@ -111,6 +115,10 @@ while [[ $# -gt 0 ]]; do
             EXOG_SE1_CSV="$2"; shift 2 ;;
         --exog_se4_csv)
             EXOG_SE4_CSV="$2"; shift 2 ;;
+        --exog_se2_wind_csv)
+            EXOG_SE2_WIND_CSV="$2"; shift 2 ;;
+        --exog_se2_solar_csv)
+            EXOG_SE2_SOLAR_CSV="$2"; shift 2 ;;
         *)
             echo "未知参数: $1"
             echo "使用 --help 查看帮助"
@@ -154,6 +162,8 @@ for path, name in [
     ('$EXOG_SE3_CSV', 'SE3'),
     ('$EXOG_SE1_CSV', 'SE1'),
     ('$EXOG_SE4_CSV', 'SE4'),
+    ('$EXOG_SE2_WIND_CSV', 'SE2_WIND'),
+    ('$EXOG_SE2_SOLAR_CSV', 'SE2_SOLAR'),
 ]:
     if not path:
         continue
