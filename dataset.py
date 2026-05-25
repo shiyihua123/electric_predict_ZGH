@@ -309,7 +309,8 @@ class PriceDatasetBuilder:
         loader = self.get_exog_loader()
 
         common_ds_utc = loader.find_common_range(df["ds_utc"])
-        df = df.set_index("ds_utc").loc[common_ds_utc].reset_index()
+        t_min, t_max = common_ds_utc.min(), common_ds_utc.max()
+        df = df[(df["ds_utc"] >= t_min) & (df["ds_utc"] <= t_max)].reset_index(drop=True)
 
         exog_feats = loader.load_features(
             df["ds_utc"],

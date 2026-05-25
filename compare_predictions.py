@@ -554,7 +554,8 @@ def main(args):
             csv_encoding=args.csv_encoding,
         )
         common_ds_utc = exog_loader.find_common_range(actual_df["ds_utc"])
-        actual_df = actual_df.set_index("ds_utc").loc[common_ds_utc].reset_index()
+        t_min, t_max = common_ds_utc.min(), common_ds_utc.max()
+        actual_df = actual_df[(actual_df["ds_utc"] >= t_min) & (actual_df["ds_utc"] <= t_max)].reset_index(drop=True)
         exog_feats = exog_loader.load_features(actual_df["ds_utc"])
         for col in exog_loader.feat_cols:
             actual_df[col] = exog_feats[col].values

@@ -193,7 +193,7 @@ class ExogenousLoader:
 
         返回裁剪后的 DatetimeIndex，仅保留所有变量都有数据的时间段
         """
-        valid_mask = pd.Series(True, index=base_ds_utc)
+        valid = np.ones(len(base_ds_utc), dtype=bool)
 
         for name in self._exog_names:
             exog_df = self._exog_dfs[name]
@@ -201,12 +201,12 @@ class ExogenousLoader:
                 continue
             first_ts = exog_df["ds_utc"].iloc[0]
             last_ts = exog_df["ds_utc"].iloc[-1]
-            valid_mask &= (base_ds_utc >= first_ts) & (base_ds_utc <= last_ts)
+            valid &= (base_ds_utc >= first_ts) & (base_ds_utc <= last_ts)
 
-        if valid_mask.all():
+        if valid.all():
             return base_ds_utc
 
-        trimmed = base_ds_utc[valid_mask]
+        trimmed = base_ds_utc[valid]
         if len(trimmed) == 0:
             names = ", ".join(self._exog_names)
             raise ValueError(
@@ -217,7 +217,7 @@ class ExogenousLoader:
         n_removed = len(base_ds_utc) - len(trimmed)
         print(
             f"[外生变量对齐] 裁剪了 {n_removed} 个时间点，"
-            f"剩余 {len(trimmed)} 行 ({trimmed[0]} ~ {trimmed[-1]})"
+            f"剩余 {len(trimmed)} 行"
         )
         return trimmed
 
