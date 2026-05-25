@@ -8,8 +8,6 @@
 
 set -euo pipefail
 
-VENV_PYTHON="/home/syh/workplace/PythonProject/electric_predict_ZGH/.venv/bin/python3"
-
 # ========== Defaults ==========
 MONTEL_CSV="sourceData/SE2_Price_Spot_EUR_MWh_H_Forecast/forecast_issued_00_prefix_latest.csv"
 PRED_CSV="outputs/predict_results/predict_$(date +%Y-%m-%d)_issued_00_1056h.csv"
@@ -71,11 +69,6 @@ if [ ! -f "$PRED_CSV" ]; then
     exit 1
 fi
 
-if [ ! -f "$VENV_PYTHON" ]; then
-    echo "Error: venv Python not found: $VENV_PYTHON"
-    exit 1
-fi
-
 # ========== Run ==========
 echo "=========================================="
 echo "  Plot Forecast Comparison"
@@ -97,7 +90,7 @@ if [ -n "$MODEL_NAME" ]; then
     PLOT_ARGS+=(--model_name "$MODEL_NAME")
 fi
 
-"$VENV_PYTHON" "./plot_forecast.py" "${PLOT_ARGS[@]}"
+python3 "./plot_forecast.py" "${PLOT_ARGS[@]}"
 
 echo ""
 echo "=========================================="

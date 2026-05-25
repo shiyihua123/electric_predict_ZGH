@@ -8,8 +8,6 @@
 
 set -euo pipefail
 
-VENV_PYTHON="/home/syh/workplace/PythonProject/electric_predict_ZGH/.venv/bin/python3"
-
 # ========== 默认值 ==========
 DATA_PATH="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 DATE_COL="date"
@@ -121,7 +119,7 @@ done
 
 # ========== 自动推算发布日期 ==========
 if [ -z "$ISSUED_DATE" ]; then
-    ISSUED_DATE="$("$VENV_PYTHON" -c "
+    ISSUED_DATE="$(python3 -c "
 import pandas as pd
 df = pd.read_csv('$DATA_PATH', sep='$CSV_SEP', encoding='$CSV_ENCODING')
 last_ts = pd.to_datetime(df['$DATE_COL'].iloc[-1], utc=True)
@@ -144,14 +142,9 @@ if [ ! -d "$MODEL_DIR" ]; then
     exit 1
 fi
 
-if [ ! -f "$VENV_PYTHON" ]; then
-    echo "错误: 虚拟环境 Python 不存在: $VENV_PYTHON"
-    exit 1
-fi
-
 # ========== 构建外生变量配置 ==========
 # 用 Python 动态构建外生变量配置 JSON（仅添加文件存在的变量）
-EXOG_CONFIGS=$("$VENV_PYTHON" -c "
+EXOG_CONFIGS=$(python3 -c "
 import json, os
 PROJECT_DIR = '$PROJECT_DIR'
 configs = []
@@ -207,7 +200,7 @@ PREDICT_ARGS=(
     --exog_configs "$EXOG_CONFIGS"
 )
 
-"$VENV_PYTHON" predict.py "${PREDICT_ARGS[@]}"
+python3 predict.py "${PREDICT_ARGS[@]}"
 
 echo ""
 echo "=========================================="

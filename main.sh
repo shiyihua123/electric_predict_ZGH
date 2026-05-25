@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-source "/home/syh/workplace/PythonProject/electric_predict_ZGH/.venv/bin/activate"
+# ============================================================
+# 条件判断参数
+# ============================================================
 bash "run_train.sh"
 bash "run_predict.sh"
 bash "run_compare.sh"

@@ -16,9 +16,6 @@
 # 1. 基础配置
 # ==============================================================================
 
-# Python 环境路径（使用项目虚拟环境）
-PYTHON_ENV="/home/syh/workplace/PythonProject/electric_predict_ZGH/.venv/bin/python3"
-
 # 对比脚本路径
 COMPARE_SCRIPT="./compare_predictions.py"
 
@@ -141,7 +138,7 @@ print(json.dumps(configs))
 ")
 echo "外部外生变量: $(echo "$EXOG_CONFIGS" | python3 -c "import json,sys; cf=json.load(sys.stdin); print([c['name'] for c in cf] if cf else '无')" 2>/dev/null)"
 
-$PYTHON_ENV "$COMPARE_SCRIPT" \
+python3 "$COMPARE_SCRIPT" \
     --pred_csv "$PRED_CSV" \
     --montel_prefix_csv "$MONTEL_PREFIX_CSV" \
     --montel_postfix_csv "$MONTEL_POSTFIX_CSV" \
