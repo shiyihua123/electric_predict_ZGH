@@ -93,7 +93,7 @@ EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/
 # ==============================================================================
 
 # 要训练的模型（逗号分隔）：NHITS, TCN, NBEATSx
-MODELS="NBEATSx"
+MODELS="NHITS"
 
 # 是否使用外生变量（时间特征）
 USE_EXOG="--use_exog"

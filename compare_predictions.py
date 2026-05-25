@@ -553,7 +553,10 @@ def main(args):
             csv_sep=args.csv_sep,
             csv_encoding=args.csv_encoding,
         )
+        common_ds_utc = exog_loader.find_common_range(actual_df["ds_utc"])
+        actual_df = actual_df.set_index("ds_utc").loc[common_ds_utc].reset_index()
         exog_feats = exog_loader.load_features(actual_df["ds_utc"])
+
         for col in exog_loader.feat_cols:
             actual_df[col] = exog_feats[col].values
         print(f"   外部外生变量: {exog_loader.feat_cols}")

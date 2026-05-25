@@ -16,6 +16,22 @@ import numpy as np
 import pandas as pd
 
 
+def _infer_freq_minutes(series: pd.Series) -> float:
+    diffs = series.diff().dropna()
+    if diffs.empty:
+        return 60.0
+    return diffs.dt.total_seconds().min() / 60.0
+
+
+def _resample_to_hourly(df: pd.DataFrame, feat_col: str) -> pd.DataFrame:
+    df = df.set_index("ds_utc")
+    df = df[[feat_col]].copy()
+    df = df.resample("h").mean()
+    df[feat_col] = df[feat_col].interpolate(method="time").ffill().bfill()
+    df = df.reset_index()
+    return df
+
+
 def load_exog_csv(
     csv_path: str,
     name: str,
@@ -79,6 +95,10 @@ def load_exog_csv(
     df = df.dropna(subset=["ds_utc"])
     df = df.drop_duplicates(subset=["ds_utc"], keep="last")
     df = df.sort_values("ds_utc").reset_index(drop=True)
+
+    freq_min = _infer_freq_minutes(df["ds_utc"])
+    if freq_min < 55:
+        df = _resample_to_hourly(df, feat_col)
 
     return df
 
@@ -184,6 +204,47 @@ class ExogenousLoader:
         """返回所有外生变量的列名列表"""
         return [f"feat_{name}" for name in self._exog_names]
 
+    def find_common_range(
+        self,
+        base_ds_utc: pd.DatetimeIndex,
+    ) -> pd.DatetimeIndex:
+        """
+        找到所有外生变量与基准数据的共同时间覆盖范围
+
+        取所有变量 first_valid 的 max 和 last_valid 的 min，
+        裁剪 base_ds_utc 到该范围。超出范围的数据没有外生变量支持。
+
+        返回：
+            裁剪后的 DatetimeIndex
+        """
+        valid_mask = pd.Series(True, index=base_ds_utc)
+
+        for name in self._exog_names:
+            exog_df = self._exog_dfs[name]
+            if exog_df.empty:
+                continue
+            first_ts = exog_df["ds_utc"].iloc[0]
+            last_ts = exog_df["ds_utc"].iloc[-1]
+            valid_mask &= (base_ds_utc >= first_ts) & (base_ds_utc <= last_ts)
+
+        if valid_mask.all():
+            return base_ds_utc
+
+        trimmed = base_ds_utc[valid_mask]
+        if len(trimmed) == 0:
+            names = ", ".join(self._exog_names)
+            raise ValueError(
+                f"所有外生变量 ({names}) 与基准数据没有共同时间范围。\n"
+                f"基准数据范围: {base_ds_utc[0]} ~ {base_ds_utc[-1]}"
+            )
+
+        n_removed = len(base_ds_utc) - len(trimmed)
+        print(
+            f"[外生变量对齐] 裁剪了 {n_removed} 个时间点（超出所有外生变量共同覆盖范围），"
+            f"剩余 {len(trimmed)} 行，范围: {trimmed[0]} ~ {trimmed[-1]}"
+        )
+        return trimmed
+
     def load_features(
         self,
         base_ds_utc: pd.DatetimeIndex,
@@ -193,11 +254,11 @@ class ExogenousLoader:
         加载所有外生变量，对齐到基准时间索引
 
         参数：
-            base_ds_utc: 基准 UTC 时间索引
+            base_ds_utc: 基准 UTC 时间索引（建议先用 find_common_range 裁剪）
             missing_strategy: 缺失值处理策略
 
         返回：
-            DataFrame，索引与 base_ds_utc 对齐，列为 feat_{name}
+            DataFrame，列名为 feat_{name}，行数与 base_ds_utc 一致
         """
         result = pd.DataFrame({"ds_utc": base_ds_utc})
 
