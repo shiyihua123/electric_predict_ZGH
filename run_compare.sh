@@ -49,6 +49,13 @@ EXOG_SE1_CSV=""
 EXOG_SE4_CSV=""
 EXOG_SE2_WIND_CSV=""
 EXOG_SE2_SOLAR_CSV=""
+EXOG_SE2_CONSUMPTION_CSV=""
+EXOG_SE2_HYDRO_CSV=""
+EXOG_SE2_RESIDUAL_LOAD_CSV=""
+EXOG_SE2_SE3_NTC_CSV=""
+EXOG_SE2_SE3_FLOW_CSV=""
+EXOG_SE3_SE2_NTC_CSV=""
+EXOG_SE3_SE2_FLOW_CSV=""
 
 # ==============================================================================
 # 3. 数据列配置（自动检测，一般不需要修改）
@@ -135,6 +142,13 @@ for path, name in [
     ('$EXOG_SE4_CSV', 'SE4'),
     ('$EXOG_SE2_WIND_CSV', 'SE2_WIND'),
     ('$EXOG_SE2_SOLAR_CSV', 'SE2_SOLAR'),
+    ('$EXOG_SE2_CONSUMPTION_CSV', 'SE2_CONSUMPTION'),
+    ('$EXOG_SE2_HYDRO_CSV', 'SE2_HYDRO'),
+    ('$EXOG_SE2_RESIDUAL_LOAD_CSV', 'SE2_RESIDUAL_LOAD'),
+    ('$EXOG_SE2_SE3_NTC_CSV', 'SE2_SE3_NTC'),
+    ('$EXOG_SE2_SE3_FLOW_CSV', 'SE2_SE3_FLOW'),
+    ('$EXOG_SE3_SE2_NTC_CSV', 'SE3_SE2_NTC'),
+    ('$EXOG_SE3_SE2_FLOW_CSV', 'SE3_SE2_FLOW'),
 ]:
     if not path:
         continue
