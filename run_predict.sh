@@ -1,0 +1,194 @@
+#!/bin/bash
+# 电价预测启动脚本
+#
+# 用法：
+#   bash run_predict.sh                                    # 使用默认参数运行
+#   bash run_predict.sh --insured_time 12 --target_hours 168  # 自定义参数
+#   bash run_predict.sh --help                               # 查看帮助
+
+set -euo pipefail
+
+VENV_PYTHON="/home/syh/workplace/PythonProject/electric_predict_ZGH/.venv/bin/python3"
+
+# ========== 默认值 ==========
+DATA_PATH="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+DATE_COL="date"
+TARGET_COL="price"
+CSV_SEP=","
+CSV_ENCODING="utf-8"
+FREQ="h"
+UNIQUE_ID="SE2"
+MISSING_STRATEGY="interpolate"
+MODEL_DIR="outputs/models_results/neuralforecast_bundle"
+ISSUED_TZ="Europe/Stockholm"
+INSURED_TIME="0"
+TARGET_HOURS="1056"
+ISSUED_DATE="$(date +%Y-%m-%d)"
+EXOG_SE3_CSV="sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+OUT_CSV=""
+
+# ========== 解析命令行参数 ==========
+print_help() {
+    cat << EOF
+电价预测启动脚本
+
+用法: bash run_predict.sh [选项]
+
+  数据参数:
+    --data_path PATH           CSV 数据文件路径 (默认: sourceData/.../actual_min_to_H_true_latest.csv)
+    --date_col NAME            时间列名 (默认: date)
+    --target_col NAME          目标价格列名 (默认: price)
+    --csv_sep SEP              CSV 分隔符 (默认: ,)
+    --csv_encoding ENC         CSV 编码 (默认: utf-8)
+    --freq FREQ                时间频率 (默认: h)
+    --unique_id ID             时间序列唯一标识 (默认: SE2)
+    --missing_strategy STRAT   缺失值处理策略: interpolate / ffill / raise (默认: interpolate)
+
+  模型参数:
+    --model_dir DIR            模型目录 (默认: outputs/models_results/neuralforecast_bundle)
+
+  预测参数:
+    --issued_tz TZ             发布时区 (默认: Europe/Stockholm)
+    --issued_date DATE         发布日期 YYYY-MM-DD (不指定则自动取数据最新日期 + 1 天)
+    --insured_time HOUR        发布时间点: 0 / 12 (默认: 0)
+    --target_hours HOURS       目标预测小时数 (默认: 1032)
+
+  外生变量:
+    --exog_se3_csv PATH        SE3 电价数据文件路径 (不指定则不加入 SE3 外生变量)
+
+  输出参数:
+    --out_csv PATH             输出 CSV 路径 (默认: outputs/predict_results/predict_issued_XX_XXXh.csv)
+
+示例:
+    bash run_predict.sh
+    bash run_predict.sh --insured_time 12 --target_hours 168
+    bash run_predict.sh --issued_date 2026-05-19 --insured_time 0 --target_hours 120
+    bash run_predict.sh --issued_date 2026-05-19 --insured_time 0 --target_hours 120 --out_csv ./my_pred.csv
+EOF
+    exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --help|-h)
+            print_help
+            ;;
+        --data_path)
+            DATA_PATH="$2"; shift 2 ;;
+        --date_col)
+            DATE_COL="$2"; shift 2 ;;
+        --target_col)
+            TARGET_COL="$2"; shift 2 ;;
+        --csv_sep)
+            CSV_SEP="$2"; shift 2 ;;
+        --csv_encoding)
+            CSV_ENCODING="$2"; shift 2 ;;
+        --freq)
+            FREQ="$2"; shift 2 ;;
+        --unique_id)
+            UNIQUE_ID="$2"; shift 2 ;;
+        --missing_strategy)
+            MISSING_STRATEGY="$2"; shift 2 ;;
+        --model_dir)
+            MODEL_DIR="$2"; shift 2 ;;
+        --issued_tz)
+            ISSUED_TZ="$2"; shift 2 ;;
+        --issued_date)
+            ISSUED_DATE="$2"; shift 2 ;;
+        --insured_time)
+            INSURED_TIME="$2"; shift 2 ;;
+        --target_hours)
+            TARGET_HOURS="$2"; shift 2 ;;
+        --out_csv)
+            OUT_CSV="$2"; shift 2 ;;
+        --exog_se3_csv)
+            EXOG_SE3_CSV="$2"; shift 2 ;;
+        *)
+            echo "未知参数: $1"
+            echo "使用 --help 查看帮助"
+            exit 1
+            ;;
+    esac
+done
+
+# ========== 自动推算发布日期 ==========
+if [ -z "$ISSUED_DATE" ]; then
+    ISSUED_DATE="$("$VENV_PYTHON" -c "
+import pandas as pd
+df = pd.read_csv('$DATA_PATH', sep='$CSV_SEP', encoding='$CSV_ENCODING')
+last_ts = pd.to_datetime(df['$DATE_COL'].iloc[-1], utc=True)
+print((last_ts + pd.Timedelta(days=1)).strftime('%Y-%m-%d'))
+")"
+    echo "自动推算发布日期: $ISSUED_DATE (数据最新日期 + 1 天)"
+fi
+if [ -z "$OUT_CSV" ]; then
+    OUT_CSV="outputs/predict_results/predict_${ISSUED_DATE}_issued_$(printf '%02d' "$INSURED_TIME")_${TARGET_HOURS}h.csv"
+fi
+
+# ========== 检查 ==========
+if [ ! -f "$DATA_PATH" ]; then
+    echo "错误: 数据文件不存在: $DATA_PATH"
+    exit 1
+fi
+
+if [ ! -d "$MODEL_DIR" ]; then
+    echo "错误: 模型目录不存在: $MODEL_DIR"
+    exit 1
+fi
+
+if [ ! -f "$VENV_PYTHON" ]; then
+    echo "错误: 虚拟环境 Python 不存在: $VENV_PYTHON"
+    exit 1
+fi
+
+# ========== 构建外生变量配置 ==========
+EXOG_CONFIGS="[]"
+if [ -n "$EXOG_SE3_CSV" ]; then
+    EXOG_CONFIGS='[{"csv_path":"'"$EXOG_SE3_CSV"'","name":"SE3"}]'
+    echo "外部外生变量: $EXOG_SE3_CSV"
+fi
+
+# ========== 运行预测 ==========
+echo "=========================================="
+echo "  电价预测脚本"
+echo "=========================================="
+echo "数据文件    : $DATA_PATH"
+echo "时间列      : $DATE_COL"
+echo "价格列      : $TARGET_COL"
+echo "分隔符      : $CSV_SEP"
+echo "编码        : $CSV_ENCODING"
+echo "频率        : $FREQ"
+echo "序列标识    : $UNIQUE_ID"
+echo "缺失值策略  : $MISSING_STRATEGY"
+echo "模型目录    : $MODEL_DIR"
+echo "发布时区    : $ISSUED_TZ"
+echo "发布日期    : $ISSUED_DATE"
+echo "发布时间    : ${INSURED_TIME}:00 (瑞典时间)"
+echo "预测小时数  : $TARGET_HOURS"
+echo "输出文件    : $OUT_CSV"
+echo "=========================================="
+
+PREDICT_ARGS=(
+    --data_path "$DATA_PATH"
+    --date_col "$DATE_COL"
+    --target_col "$TARGET_COL"
+    --csv_sep "$CSV_SEP"
+    --csv_encoding "$CSV_ENCODING"
+    --freq "$FREQ"
+    --unique_id "$UNIQUE_ID"
+    --missing_strategy "$MISSING_STRATEGY"
+    --model_dir "$MODEL_DIR"
+    --issued_tz "$ISSUED_TZ"
+    --issued_date "$ISSUED_DATE"
+    --insured_time "$INSURED_TIME"
+    --target_hours "$TARGET_HOURS"
+    --out_csv "$OUT_CSV"
+    --exog_configs "$EXOG_CONFIGS"
+)
+
+"$VENV_PYTHON" predict.py "${PREDICT_ARGS[@]}"
+
+echo ""
+echo "=========================================="
+echo "  预测完成！结果: $OUT_CSV"
+echo "=========================================="

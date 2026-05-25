@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# 模型训练输出
+outputs/
+lightning_logs/
+
+# 日志 + 哨兵文件
+logs
+.cron/
+
+# 数据文件（软连接指向外部，不提交）
+sourceData
+
+# IDE
+.vscode/
+.idea/
