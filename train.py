@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore", ".*isinstance\\(treespec, LeafSpec\\).*")
 
 from neuralforecast import NeuralForecast
 from neuralforecast.losses.pytorch import MAE
-from neuralforecast.models import NHITS, PatchTST, TCN, NBEATSx
+from neuralforecast.models import NHITS, PatchTST, TCN, NBEATSx, TiDE
 
 from dataset import PriceDatasetBuilder
 from metric import (
@@ -150,14 +150,13 @@ def build_models(args, futr_exog_cols: List[str], hist_exog_cols: List[str], mod
         models.append(NBEATSx(**common_with_exog))
     
     if "PATCHTST" in wanted:
-        if args.use_exog and futr_exog_cols:
-            print("警告: PatchTST 不支持 futr_exog_list；将不使用外生变量训练 PatchTST。")
-        if args.use_exog and hist_exog_cols:
-            print("警告: PatchTST 不支持 hist_exog_list；将不使用外生变量训练 PatchTST。")
-        models.append(PatchTST(**common))
+        models.append(PatchTST(**common_with_exog))
+
+    if "TIDE" in wanted:
+        models.append(TiDE(**common_with_exog))
 
     if not models:
-        raise ValueError("没有可训练模型。可选：NHITS,TCN,NBEATSX,PatchTST")
+        raise ValueError("没有可训练模型。可选：NHITS,TCN,NBEATSX,PatchTST,TiDE")
 
     return models
 
