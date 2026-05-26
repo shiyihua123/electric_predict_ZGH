@@ -464,6 +464,17 @@ def main(args) -> None:
     metrics_by_horizon.to_csv(out_dir / "metrics_by_horizon.csv", index=False)
     metrics_by_issued_hour.to_csv(out_dir / "metrics_by_issued_hour.csv", index=False)
 
+    val_bias = metrics_by_horizon[metrics_by_horizon["split"] == "val"]
+    bias_correction = {}
+    for model in metrics_by_horizon["model"].unique():
+        model_bias = val_bias[val_bias["model"] == model]
+        if not model_bias.empty:
+            bias_correction[model] = {
+                str(int(row["target_horizon"])): float(row["bias"])
+                for _, row in model_bias.iterrows()
+            }
+    save_json(bias_correction, out_dir / "bias_correction.json")
+
     config = vars(args).copy()
     config["business_configs"] = {k: v for k, v in configs.items()}
     config["model_cols"] = model_cols

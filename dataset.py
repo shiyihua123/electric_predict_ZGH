@@ -292,10 +292,10 @@ class PriceDatasetBuilder:
         df["feat_doy_sin"] = np.sin(2 * np.pi * (doy - 1) / 365.25)
         df["feat_doy_cos"] = np.cos(2 * np.pi * (doy - 1) / 365.25)
 
-        # 是否周末（周六、周日）
+        # # 是否周末（周六、周日）
         df["feat_is_weekend"] = (local_time.dt.dayofweek >= 5).astype(float)
 
-        # UTC 偏移量（小时）和是否夏令时
+        # # UTC 偏移量（小时）和是否夏令时
         utc_offset = local_time.map(lambda x: x.utcoffset().total_seconds() / 3600.0)
         df["feat_utc_offset"] = utc_offset.astype(float)
         df["feat_is_dst"] = (df["feat_utc_offset"] > df["feat_utc_offset"].min()).astype(float)
