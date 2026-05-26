@@ -30,7 +30,7 @@ import warnings
 warnings.filterwarnings("ignore", ".*isinstance\\(treespec, LeafSpec\\).*")
 
 from neuralforecast import NeuralForecast
-from neuralforecast.losses.pytorch import MAE
+from neuralforecast.losses.pytorch import MAE, HuberLoss
 from neuralforecast.models import NHITS, PatchTST, TCN, NBEATSx, TiDE
 
 from dataset import PriceDatasetBuilder
@@ -115,11 +115,18 @@ def build_models(args, futr_exog_cols: List[str], hist_exog_cols: List[str], mod
     """构建 NeuralForecast 模型列表"""
     input_size = args.input_days * 24
 
+    if args.loss_type == "huber":
+        train_loss = HuberLoss(delta=args.huber_delta)
+        val_loss = HuberLoss(delta=args.huber_delta)
+    else:
+        train_loss = MAE()
+        val_loss = MAE()
+
     common = dict(
         h=model_h,
         input_size=input_size,
-        loss=MAE(),
-        valid_loss=MAE(),
+        loss=train_loss,
+        valid_loss=val_loss,
         max_steps=args.max_steps,
         learning_rate=args.learning_rate,
         val_check_steps=args.val_check_steps,
@@ -582,6 +589,19 @@ def build_parser():
         default="robust",
         choices=["identity", "standard", "robust", "minmax"],
         help="数据缩放类型"
+    )
+    parser.add_argument(
+        "--loss_type",
+        type=str,
+        default="mae",
+        choices=["mae", "huber"],
+        help="损失函数类型：mae（默认）、huber（对尖峰不敏感，缓解低估）"
+    )
+    parser.add_argument(
+        "--huber_delta",
+        type=float,
+        default=10.0,
+        help="Huber loss 的 delta 参数（仅 loss_type=huber 时生效）"
     )
 
     # ========== 评估参数 ==========

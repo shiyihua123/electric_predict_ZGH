@@ -116,6 +116,10 @@ INTERNAL_VAL_DAYS=180      # 内部早停验证天数
 # 数据缩放类型：identity（不缩放）、standard（标准化）、robust（鲁棒）、minmax（归一化）
 SCALER_TYPE="robust"
 
+# 损失函数类型：mae / huber
+LOSS_TYPE="huber"
+HUBER_DELTA=10.0
+
 # ==============================================================================
 # 7. 评估参数配置
 # ==============================================================================
@@ -242,6 +246,8 @@ python $TRAIN_SCRIPT \
     --early_stop_patience_steps $EARLY_STOP_PATIENCE \
     --internal_val_days $INTERNAL_VAL_DAYS \
     --nf_scaler_type "$SCALER_TYPE" \
+    --loss_type "$LOSS_TYPE" \
+    --huber_delta $HUBER_DELTA \
     \
     --eval_step_size $EVAL_STEP_SIZE \
     $SKIP_VAL_CV \
