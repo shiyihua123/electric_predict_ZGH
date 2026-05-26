@@ -141,7 +141,12 @@ def build_models(args, futr_exog_cols: List[str], hist_exog_cols: List[str], mod
     models = []
 
     if "NHITS" in wanted:
-        models.append(NHITS(**common_with_exog))
+        models.append(NHITS(
+            **common_with_exog,
+            n_blocks=[1, 1, 1, 1],
+            n_pool_kernel_size=[8, 4, 2, 1],
+            dropout_prob_theta=0.2,
+        ))
 
     if "TCN" in wanted:
         models.append(TCN(**common_with_exog))
@@ -153,7 +158,14 @@ def build_models(args, futr_exog_cols: List[str], hist_exog_cols: List[str], mod
         models.append(PatchTST(**common))
 
     if "TIDE" in wanted:
-        models.append(TiDE(**common_with_exog))
+        models.append(TiDE(
+            **common_with_exog,
+            dropout=0.5,
+            num_encoder_layers=2,
+            num_decoder_layers=2,
+            decoder_output_dim=128,
+            temporal_width=8,
+        ))
 
     if not models:
         raise ValueError("没有可训练模型。可选：NHITS,TCN,NBEATSX,PatchTST,TiDE")
@@ -429,6 +441,11 @@ def main(args) -> None:
     all_business.append(test_business)
 
     pred_df = pd.concat(all_business, ignore_index=True)
+
+    model_cols_raw = infer_model_cols(pred_df)
+    if len(model_cols_raw) >= 2:
+        pred_df["Ensemble"] = pred_df[model_cols_raw].mean(axis=1)
+
     pred_df.to_csv(out_dir / "predictions_business.csv", index=False)
 
     model_cols = infer_model_cols(pred_df)

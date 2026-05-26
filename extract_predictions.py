@@ -59,10 +59,15 @@ def main():
     out_name = f"{c_col_name}_{c_first}_{q_max}day.csv"
     out_path = out_dir / out_name
 
+    if "Ensemble" in df.columns:
+        ours_col = df["Ensemble"]
+    else:
+        ours_col = df.iloc[:, 20]
+
     out = pd.DataFrame({
         "unique_id": df.iloc[:, 0],
         "ds": df.iloc[:, 11],
-        "ours": df.iloc[:, 20],
+        "ours": ours_col,
     })
 
     out.to_csv(out_path, index=False)

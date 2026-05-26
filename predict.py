@@ -224,6 +224,10 @@ def main():
 
     model_cols = infer_model_cols(business_preds)
 
+    if len(model_cols) >= 2:
+        business_preds["Ensemble"] = business_preds[model_cols].mean(axis=1)
+        model_cols.append("Ensemble")
+
     out_path = Path(args.out_csv)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     business_preds.to_csv(out_path, index=False)

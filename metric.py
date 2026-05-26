@@ -57,6 +57,8 @@ ID_COLS = {
     "issued_date",     # 发布日期（字符串）
     "target_date",     # 目标日期（字符串）
     "issued_hour_local",  # 发布时间小时（本地）
+    "first_target_horizon",  # 第一个目标小时
+    "last_target_horizon",   # 最后一个目标小时
 }
 
 

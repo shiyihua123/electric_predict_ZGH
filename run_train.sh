@@ -61,7 +61,7 @@ TEST_END="2026-05-18 23:00:00+00:00"
 # ==============================================================================
 
 # 模型输入历史天数（建议 28 或 56）
-INPUT_DAYS=90
+INPUT_DAYS=56
 
 # 发布时区（瑞典时区）
 ISSUED_TZ="Europe/Stockholm"
@@ -92,7 +92,7 @@ EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_lates
 # 5. 模型配置
 # ==============================================================================
 
-# 要训练的模型（逗号分隔）：NHITS, TCN, NBEATSx
+# 要训练的模型（逗号分隔）：NHITS, TCN, NBEATSx, TiDE
 MODELS="TiDE"
 
 # 是否使用外生变量（时间特征）
@@ -105,10 +105,10 @@ USE_EXOG="--use_exog"
 # ==============================================================================
 
 MAX_STEPS=5000            # 最大训练步数
-LEARNING_RATE=5e-4       # 学习率
+LEARNING_RATE=1e-3       # 学习率
 BATCH_SIZE=32             # 批次大小
 WINDOWS_BATCH_SIZE=1024   # 窗口批次大小
-VAL_CHECK_STEPS=200       # 验证间隔步数
+VAL_CHECK_STEPS=100       # 验证间隔步数
 EARLY_STOP_PATIENCE=8    # 早停耐心值
 INTERNAL_VAL_DAYS=180      # 内部早停验证天数
 
@@ -266,3 +266,4 @@ else
     echo "========================================"
     exit 1
 fi
+
