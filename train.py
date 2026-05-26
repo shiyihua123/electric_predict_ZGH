@@ -150,7 +150,7 @@ def build_models(args, futr_exog_cols: List[str], hist_exog_cols: List[str], mod
         models.append(NBEATSx(**common_with_exog))
     
     if "PATCHTST" in wanted:
-        models.append(PatchTST(**common_with_exog))
+        models.append(PatchTST(**common))
 
     if "TIDE" in wanted:
         models.append(TiDE(**common_with_exog))

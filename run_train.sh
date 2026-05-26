@@ -93,7 +93,7 @@ EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_lates
 # ==============================================================================
 
 # 要训练的模型（逗号分隔）：NHITS, TCN, NBEATSx
-MODELS="NHITS,PatchTST,TiDE"
+MODELS="TiDE"
 
 # 是否使用外生变量（时间特征）
 USE_EXOG="--use_exog"
@@ -107,7 +107,7 @@ USE_EXOG="--use_exog"
 MAX_STEPS=5000            # 最大训练步数
 LEARNING_RATE=5e-4       # 学习率
 BATCH_SIZE=32             # 批次大小
-WINDOWS_BATCH_SIZE=2048   # 窗口批次大小
+WINDOWS_BATCH_SIZE=1024   # 窗口批次大小
 VAL_CHECK_STEPS=200       # 验证间隔步数
 EARLY_STOP_PATIENCE=8    # 早停耐心值
 INTERNAL_VAL_DAYS=180      # 内部早停验证天数
