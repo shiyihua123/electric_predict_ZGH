@@ -92,11 +92,6 @@ def build_parser():
         help="外部外生变量配置，JSON 格式，如 '[{\"csv_path\":\"...\",\"name\":\"SE3\"}]'"
     )
 
-    parser.add_argument(
-        "--use_bias_correction", action="store_true", default=False,
-        help="启用偏差修正（从模型目录加载 bias_correction.json，按 target_horizon 修正预测值）"
-    )
-
     return parser
 
 
@@ -226,23 +221,6 @@ def main():
         target_hours=args.target_hours,
         require_complete=True,
     )
-
-    if args.use_bias_correction:
-        bias_path = model_dir / "bias_correction.json"
-        if bias_path.exists():
-            with open(bias_path) as f:
-                bias_map = json.load(f)
-            corrected = 0
-            for model_name, horizon_bias in bias_map.items():
-                if model_name in business_preds.columns:
-                    bias_series = business_preds["target_horizon"].astype(str).map(horizon_bias)
-                    mask = bias_series.notna()
-                    business_preds.loc[mask, model_name] -= bias_series[mask].values
-                    corrected += mask.sum()
-            if corrected > 0:
-                print(f"偏差修正: 已对 {corrected} 个预测值按 target_horizon 修正 (bias_correction.json)")
-        else:
-            print(f"警告: bias_correction.json 不存在于 {model_dir}，跳过偏差修正")
 
     model_cols = infer_model_cols(business_preds)
 
