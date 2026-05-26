@@ -260,45 +260,93 @@ class PriceDatasetBuilder:
     def _add_time_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         添加时间特征（作为未来外生变量）
-        
+
         生成的特征：
-        - 小时周期（sin/cos 编码）
-        - 星期周期（sin/cos 编码）
-        - 月份周期（sin/cos 编码）
-        - 年内日周期（sin/cos 编码）
-        - 是否周末
+        - 小时周期 sin/cos
+        - 星期周期 sin/cos
+        - 一周内小时周期 sin/cos
+        - 月份周期 sin/cos
+        - 年内日周期 sin/cos
+        - 周末/工作时段/峰谷时段
+        - 季节/采暖季
         - UTC 偏移量
         - 是否夏令时
         """
+        df = df.copy()
+
         # 将 UTC 时间转换为本地时间
         local_time = df["ds_utc"].dt.tz_convert(self.local_tz)
 
-        # 提取时间特征
-        hour = local_time.dt.hour.astype(float)    # 小时（0-23）
-        dow = local_time.dt.dayofweek.astype(float)  # 星期几（0-6）
-        month = local_time.dt.month.astype(float)   # 月份（1-12）
-        doy = local_time.dt.dayofyear.astype(float) # 年内第几天（1-365）
+        # 基础时间字段
+        hour = local_time.dt.hour.astype(float)
+        dow = local_time.dt.dayofweek.astype(float)
+        month = local_time.dt.month.astype(float)
+        doy = local_time.dt.dayofyear.astype(float)
 
-        # 使用 sin/cos 编码周期特征，将周期性特征转换为连续特征
+        # 小时周期：24小时
         df["feat_hour_sin"] = np.sin(2 * np.pi * hour / 24)
         df["feat_hour_cos"] = np.cos(2 * np.pi * hour / 24)
 
+        # 星期周期：7天
         df["feat_dow_sin"] = np.sin(2 * np.pi * dow / 7)
         df["feat_dow_cos"] = np.cos(2 * np.pi * dow / 7)
 
+        # 一周内第几个小时：168小时周期
+        hour_of_week = dow * 24 + hour
+        df["feat_how_sin"] = np.sin(2 * np.pi * hour_of_week / 168)
+        df["feat_how_cos"] = np.cos(2 * np.pi * hour_of_week / 168)
+
+        # 月份周期
         df["feat_month_sin"] = np.sin(2 * np.pi * (month - 1) / 12)
         df["feat_month_cos"] = np.cos(2 * np.pi * (month - 1) / 12)
 
+        # 年内日周期
         df["feat_doy_sin"] = np.sin(2 * np.pi * (doy - 1) / 365.25)
         df["feat_doy_cos"] = np.cos(2 * np.pi * (doy - 1) / 365.25)
 
-        # # 是否周末（周六、周日）
-        df["feat_is_weekend"] = (local_time.dt.dayofweek >= 5).astype(float)
+        # 周末
+        df["feat_is_weekend"] = (dow >= 5).astype(float)
 
-        # # UTC 偏移量（小时）和是否夏令时
-        utc_offset = local_time.map(lambda x: x.utcoffset().total_seconds() / 3600.0)
+        # 工作日
+        df["feat_is_workday"] = (dow < 5).astype(float)
+
+        # 峰谷时段
+        df["feat_is_night"] = ((hour >= 0) & (hour <= 5)).astype(float)
+
+        df["feat_is_morning_peak"] = (
+            (hour >= 7) & (hour <= 10) & (dow < 5)
+        ).astype(float)
+
+        df["feat_is_evening_peak"] = (
+            (hour >= 17) & (hour <= 20) & (dow < 5)
+        ).astype(float)
+
+        df["feat_is_business_hour"] = (
+            (hour >= 8) & (hour <= 18) & (dow < 5)
+        ).astype(float)
+
+        df["feat_is_offpeak"] = (
+            (hour <= 6) | (hour >= 22)
+        ).astype(float)
+
+        # 季节特征
+        df["feat_is_winter"] = local_time.dt.month.isin([12, 1, 2]).astype(float)
+        df["feat_is_summer"] = local_time.dt.month.isin([6, 7, 8]).astype(float)
+
+        df["feat_is_heating_season"] = (
+            local_time.dt.month.isin([10, 11, 12, 1, 2, 3])
+        ).astype(float)
+
+        # UTC 偏移量
+        utc_offset = local_time.map(
+            lambda x: x.utcoffset().total_seconds() / 3600.0
+        )
         df["feat_utc_offset"] = utc_offset.astype(float)
-        df["feat_is_dst"] = (df["feat_utc_offset"] > df["feat_utc_offset"].min()).astype(float)
+
+        # 是否夏令时
+        df["feat_is_dst"] = local_time.map(
+            lambda x: float(x.dst().total_seconds() != 0)
+        )
 
         return df
 
