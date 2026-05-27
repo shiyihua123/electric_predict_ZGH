@@ -47,10 +47,6 @@ from metric import (
     summarize_overall,
 )
 
-import shutil
-if os.path.exists("outputs"):
-    shutil.rmtree("outputs")
-
 def set_seed(seed: int) -> None:
     """设置随机种子，确保实验可重复"""
     random.seed(seed)

@@ -96,7 +96,7 @@ EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_lates
 # ==============================================================================
 
 # 要训练的模型（逗号分隔）：NHITS, TCN, NBEATSx, TiDE
-MODELS="NHITS"
+MODELS="TiDE"
 
 # 是否使用外生变量（时间特征）
 USE_EXOG="--use_exog"
