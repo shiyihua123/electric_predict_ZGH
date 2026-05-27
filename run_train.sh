@@ -118,7 +118,7 @@ SCALER_TYPE="robust"
 
 # 损失函数类型：mae / huber
 LOSS_TYPE="huber"
-HUBER_DELTA=10.0
+HUBER_DELTA=5.0
 
 # ==============================================================================
 # 7. 评估参数配置
@@ -143,7 +143,7 @@ SEED=42                   # 随机种子
 # DEVICES="auto"
 
 # 单卡训练（推荐，有GPU时取消注释并注释上面两行）
-GPU_IDS="5"
+GPU_IDS="0"
 ACCELERATOR="gpu"
 DEVICES="1"
 
