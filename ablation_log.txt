@@ -1,0 +1,48 @@
+# ==============================================================================
+# 外生变量消融实验记录
+# ==============================================================================
+# 固定配置: INPUT_DAYS=56, NHITS, Huber δ=5, robust scaler
+# 对比指标来源: outputs/<VERSION>/comparison_results/metrics_summary.csv
+# ==============================================================================
+
+## 一、外部变量消融（Leave-One-Out）
+
+基线: SE3, SE1, SE4, WIND, SOLAR, CONSUMPTION, RESIDUAL_LOAD 全部启用
+
+| # | VERSION | 启用的外部变量 | comp MAE | comp Bias | comp RMSE | test MAE | test Bias | 结论 |
+|---|--------|-------------|:------:|:-------:|:-------:|:------:|:-------:|------|
+| 0 | baseline (huber_5) | 全部7个 | 27.81 | -10.69 | 42.79 | 25.08 | -5.56 | 基准 |
+| 1 | no_SE3 | 去掉 SE3 | |||||
+| 2 | no_SE1 | 去掉 SE1 | |||||
+| 3 | no_SE4 | 去掉 SE4 | |||||
+| 4 | no_WIND | 去掉 WIND | |||||
+| 5 | no_SOLAR | 去掉 SOLAR | |||||
+| 6 | no_CONSUMPTION | 去掉 CONSUMPTION | |||||
+| 7 | no_RESIDUAL_LOAD | 去掉 RESIDUAL_LOAD | |||||
+
+
+## 二、时间特征消融
+
+基线: 全部17个时间特征 + 最优外部变量组合
+
+| # | VERSION | 操作 | comp MAE | comp Bias | comp RMSE | test MAE | test Bias | 结论 |
+|---|--------|-----|:------:|:-------:|:-------:|:------:|:-------:|------|
+| 0 | time_full | 全部17个 | ||||| 基准 |
+| 1 | no_cyclic | 去掉 sin/cos 周期编码(10个) | |||||
+| 2 | no_calendar | 去掉时段标记(9个) | |||||
+| 3 | no_seasonal | 去掉季节标记(3个) | |||||
+| 4 | no_zone | 去掉时区标记(2个) | |||||
+| 5 | cyclic_only | 仅 sin/cos 周期编码 | |||||
+
+
+## 三、最终最优配置
+
+| 参数 | 值 |
+|------|-----|
+| VERSION | |
+| 外部变量 | |
+| 时间特征 | |
+| comp MAE | |
+| comp Bias | |
+| test MAE | |
+| test Bias | |
