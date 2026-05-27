@@ -21,12 +21,15 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # 对比脚本路径
 COMPARE_SCRIPT="./compare_predictions.py"
 
+# 版本名称（与 run_train.sh 保持一致）
+VERSION="huber_5"
+
 # ==============================================================================
 # 2. 输入文件配置
 # ==============================================================================
 
 # 模型预测结果文件（训练输出的 predictions_business.csv）
-PRED_CSV="./outputs/models_results/predictions_business.csv"
+PRED_CSV="./outputs/${VERSION}/models_results/predictions_business.csv"
 
 # Montel 预测文件
 # 00点发布（瑞典时间）→ 预测次日0点开始
@@ -72,7 +75,7 @@ TARGET_COL=""
 # ==============================================================================
 
 # 输出目录（会自动创建）
-OUT_DIR="./outputs/comparison_results"
+OUT_DIR="./outputs/${VERSION}/comparison_results"
 
 # ==============================================================================
 # 5. CSV 文件配置

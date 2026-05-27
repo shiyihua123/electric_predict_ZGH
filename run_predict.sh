@@ -19,7 +19,11 @@ CSV_ENCODING="utf-8"
 FREQ="h"
 UNIQUE_ID="SE2"
 MISSING_STRATEGY="interpolate"
-MODEL_DIR="outputs/models_results/neuralforecast_bundle"
+
+# 版本名称（与 run_train.sh 保持一致）
+VERSION="huber_5"
+
+MODEL_DIR="outputs/${VERSION}/models_results/neuralforecast_bundle"
 ISSUED_TZ="Europe/Stockholm"
 INSURED_TIME="0"
 TARGET_HOURS="1056"
@@ -145,7 +149,7 @@ print((last_ts + pd.Timedelta(days=1)).strftime('%Y-%m-%d'))
     echo "自动推算发布日期: $ISSUED_DATE (数据最新日期 + 1 天)"
 fi
 if [ -z "$OUT_CSV" ]; then
-    OUT_CSV="outputs/predict_results/predict_${ISSUED_DATE}_issued_$(printf '%02d' "$INSURED_TIME")_${TARGET_HOURS}h.csv"
+    OUT_CSV="outputs/${VERSION}/predict_results/predict_${ISSUED_DATE}_issued_$(printf '%02d' "$INSURED_TIME")_${TARGET_HOURS}h.csv"
 fi
 
 # ========== 检查 ==========

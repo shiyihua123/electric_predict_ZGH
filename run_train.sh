@@ -21,8 +21,11 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # 训练脚本路径
 TRAIN_SCRIPT="main.py"
 
+# 版本名称（输出到 outputs/<VERSION>/ 下）
+VERSION="huber_5"
+
 # 输出目录（会自动创建）
-OUT_DIR="./outputs/models_results"
+OUT_DIR="./outputs/${VERSION}/models_results"
 
 # ==============================================================================
 # 2. 数据配置

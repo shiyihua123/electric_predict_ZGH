@@ -9,10 +9,11 @@
 set -euo pipefail
 
 # ========== Defaults ==========
+VERSION="huber_5"
 MONTEL_CSV="sourceData/SE2_Price_Spot_EUR_MWh_H_Forecast/forecast_issued_00_prefix_latest.csv"
-PRED_CSV="outputs/predict_results/predict_$(date +%Y-%m-%d)_issued_00_1056h.csv"
+PRED_CSV="outputs/${VERSION}/predict_results/predict_$(date +%Y-%m-%d)_issued_00_1056h.csv"
 MODEL_NAME="ours"
-OUT_DIR="outputs/commits"
+OUT_DIR="outputs/${VERSION}/commits"
 
 # ========== Parse CLI args ==========
 print_help() {
