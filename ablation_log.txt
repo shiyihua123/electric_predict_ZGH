@@ -18,7 +18,7 @@
 | 4 | no_WIND | 去掉 WIND | |||||
 | 5 | no_SOLAR | 去掉 SOLAR | |||||
 | 6 | no_CONSUMPTION | 去掉 CONSUMPTION | |||||
-| 7 | no_RESIDUAL_LOAD | 去掉 RESIDUAL_LOAD | |||||
+| 7 | no_RESIDUAL_LOAD | 去掉 RESIDUAL_LOAD | 29.60 | -9.38 | 44.97 | 26.43 | -4.53 | MAE ↑2.02 严重退化，关键变量必须保留 |
 
 
 ## 二、时间特征消融
