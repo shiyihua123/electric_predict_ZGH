@@ -9,7 +9,7 @@
 set -euo pipefail
 
 # ========== Defaults ==========
-VERSION="huber_5"
+VERSION="my_new_experiment"
 MONTEL_CSV="sourceData/SE2_Price_Spot_EUR_MWh_H_Forecast/forecast_issued_00_prefix_latest.csv"
 PRED_CSV="outputs/${VERSION}/predict_results/predict_$(date +%Y-%m-%d)_issued_00_1056h.csv"
 MODEL_NAME="ours"

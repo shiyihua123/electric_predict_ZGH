@@ -22,7 +22,7 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPARE_SCRIPT="./compare_predictions.py"
 
 # 版本名称（与 run_train.sh 保持一致）
-VERSION="huber_5"
+VERSION="my_new_experiment"
 
 # ==============================================================================
 # 2. 输入文件配置

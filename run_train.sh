@@ -22,7 +22,7 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TRAIN_SCRIPT="main.py"
 
 # 版本名称（输出到 outputs/<VERSION>/ 下）
-VERSION="huber_5"
+VERSION="my_new_experiment"
 
 # 输出目录（会自动创建）
 OUT_DIR="./outputs/${VERSION}/models_results"

@@ -2,7 +2,7 @@
 set -e
 
 # 版本名称（与 run_train.sh 保持一致）
-VERSION="huber_5"
+VERSION="my_new_experiment"
 
 # ============================================================
 # 条件判断参数

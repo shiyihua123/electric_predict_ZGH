@@ -21,7 +21,7 @@ UNIQUE_ID="SE2"
 MISSING_STRATEGY="interpolate"
 
 # 版本名称（与 run_train.sh 保持一致）
-VERSION="huber_5"
+VERSION="my_new_experiment"
 
 MODEL_DIR="outputs/${VERSION}/models_results/neuralforecast_bundle"
 ISSUED_TZ="Europe/Stockholm"
