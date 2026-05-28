@@ -20,6 +20,7 @@
 
 import argparse
 import json
+import random
 import re
 from datetime import datetime
 from pathlib import Path
@@ -492,6 +493,77 @@ def plot_comparison(pred_df: pd.DataFrame, model_cols: list, out_path: Path, ins
     print(f"已生成 {plot_count} 个业务窗口的对比图")
 
 
+def plot_random_samples(df: pd.DataFrame, model_cols: list, out_path: Path, n_samples: int = 5):
+    """随机抽取 N 个发布时间点，绘制 实际电价 vs 模型预测 对比图"""
+    df = df.copy()
+    df["ds_utc"] = pd.to_datetime(df["ds_utc"], utc=True)
+    df["issued_utc"] = pd.to_datetime(df["issued_utc"], utc=True)
+
+    issued_list = sorted(df["issued_utc"].dropna().unique())
+    valid_issued = []
+    for issued in issued_list:
+        part = df[df["issued_utc"] == issued]
+        if len(part) >= 24 and part["y"].notna().any():
+            valid_issued.append(issued)
+
+    if len(valid_issued) == 0:
+        print("没有找到含真实电价的发布窗口")
+        return
+
+    n = min(n_samples, len(valid_issued))
+    selected = random.sample(valid_issued, n)
+
+    colors = ["#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]
+
+    for idx, issued in enumerate(selected):
+        part = df[df["issued_utc"] == issued].sort_values("ds_utc")
+        issued_str = pd.Timestamp(issued).strftime("%Y-%m-%d %H:%M")
+
+        fig, ax = plt.subplots(figsize=(16, 7))
+
+        valid_mask = part["y"].notna()
+        if valid_mask.any():
+            ax.plot(
+                part.loc[valid_mask, "ds_utc"], part.loc[valid_mask, "y"],
+                marker=".", linewidth=2.0, label="Actual", color="#1f77b4", alpha=0.9,
+            )
+
+        for i, col in enumerate(model_cols):
+            if col not in part.columns:
+                continue
+            mask = part[col].notna()
+            if mask.any():
+                ax.plot(
+                    part.loc[mask, "ds_utc"], part.loc[mask, col],
+                    marker=".", linewidth=1.5, label=col,
+                    color=colors[i % len(colors)], alpha=0.8,
+                )
+
+        ax.set_title(f"Actual vs Prediction  |  Issued: {issued_str} UTC")
+        ax.set_xlabel("Timestamp (UTC)")
+        ax.set_ylabel("Price (EUR/MWh)")
+        ax.legend(loc="upper right")
+        ax.grid(True, alpha=0.3)
+
+        all_times = part["ds_utc"].sort_values()
+        if len(all_times) >= 3:
+            t0 = all_times.iloc[0]
+            t1 = all_times.iloc[len(all_times) // 2]
+            t2 = all_times.iloc[-1]
+            ax.set_xticks([t0, t1, t2])
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M"))
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=0, ha="center")
+
+        plt.tight_layout()
+
+        sample_out = out_path.parent / f"actual_vs_pred_sample_{idx}.png"
+        plt.savefig(sample_out, dpi=200, bbox_inches="tight")
+        plt.close()
+        print(f"  Saved: {sample_out.name} (issued={issued_str})")
+
+    print(f"已生成 {n} 个随机样本对比图")
+
+
 # ========== 主函数 ==========
 def main(args):
     out_dir = Path(args.out_dir)
@@ -615,8 +687,11 @@ def main(args):
     metrics_by_issued.to_csv(out_dir / "metrics_by_issued_hour.csv", index=False)
 
     # 10. 生成可视化
-    print("\n7. 生成对比图表（按业务窗口）...")
-    plot_comparison(aligned_df, model_cols, out_dir / "comparison_plot.png", args.insured_time)
+    # print("\n7. 生成对比图表（按业务窗口）...")
+    # plot_comparison(aligned_df, model_cols, out_dir / "comparison_plot.png", args.insured_time)
+
+    print("\n7. 生成随机样本对比图（实际电价 vs 模型预测）...")
+    plot_random_samples(aligned_df, model_cols, out_dir / "actual_vs_pred_sample.png")
 
     # 11. 打印结果
     print("\n========== 对比结果汇总（与真实电价比较）==========")

@@ -1,20 +1,12 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.venv/
-
-# 模型训练输出
+# 输出目录（模型权重、预测结果、图表等）
 outputs/
+outputs_*/
+# 临时文件
+temp/
+__pycache__/
+*.pyc
+# 日志
 lightning_logs/
-
-# 日志 + 哨兵文件
-logs
-.cron/
-
-# 数据文件（软连接指向外部，不提交）
-sourceData
-
-# IDE
-.vscode/
-.idea/
+logs/
+# 环境
+.venv/
