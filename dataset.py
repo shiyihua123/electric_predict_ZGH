@@ -368,6 +368,12 @@ class PriceDatasetBuilder:
         for col in loader.feat_cols:
             df[col] = exog_feats[col].values
 
+        if "feat_SE3" in df.columns:
+            df["feat_SE3_SE2_spread"] = df["feat_SE3"] - df["y"]
+
+        if "feat_SE4" in df.columns:
+            df["feat_SE4_SE2_spread"] = df["feat_SE4"] - df["y"]
+
         return df
 
     def get_exog_loader(self) -> Optional[ExogenousLoader]:

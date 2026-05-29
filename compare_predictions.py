@@ -631,6 +631,12 @@ def main(args):
         exog_feats = exog_loader.load_features(actual_df["ds_utc"])
         for col in exog_loader.feat_cols:
             actual_df[col] = exog_feats[col].values
+
+        if "feat_SE3" in actual_df.columns:
+            actual_df["feat_SE3_SE2_spread"] = actual_df["feat_SE3"] - actual_df["y"]
+        if "feat_SE4" in actual_df.columns:
+            actual_df["feat_SE4_SE2_spread"] = actual_df["feat_SE4"] - actual_df["y"]
+
         print(f"   外部外生变量: {exog_loader.feat_cols}")
 
     # 5. 对齐数据
