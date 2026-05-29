@@ -77,6 +77,7 @@ class PriceDatasetBuilder:
         csv_sep: str = ",",        # CSV 分隔符
         csv_encoding: str = "utf-8",  # CSV 编码
         exog_configs: Optional[List[dict]] = None,  # 外部外生变量配置列表
+        use_spread: bool = True,  # 是否构造 SE3-SE2 / SE4-SE2 价差特征
     ):
         # 保存文件路径和列配置
         self.data_path = excel_path
@@ -90,6 +91,7 @@ class PriceDatasetBuilder:
         self.csv_sep = csv_sep
         self.csv_encoding = csv_encoding
         self.exog_configs = exog_configs or []
+        self.use_spread = use_spread
 
         # 将时间字符串转换为 UTC 时间戳
         self.train_start = self._to_utc(train_start)
@@ -368,10 +370,10 @@ class PriceDatasetBuilder:
         for col in loader.feat_cols:
             df[col] = exog_feats[col].values
 
-        if "feat_SE3" in df.columns:
+        if self.use_spread and "feat_SE3" in df.columns:
             df["feat_SE3_SE2_spread"] = df["feat_SE3"] - df["y"]
 
-        if "feat_SE4" in df.columns:
+        if self.use_spread and "feat_SE4" in df.columns:
             df["feat_SE4_SE2_spread"] = df["feat_SE4"] - df["y"]
 
         return df

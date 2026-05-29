@@ -50,7 +50,7 @@ MISSING_STRATEGY="interpolate"
 # 3. 时间切分配置（UTC 时间）
 # ==============================================================================
 
-TRAIN_START="2015-01-01 00:00:00+00:00"
+TRAIN_START="2020-01-01 00:00:00+00:00"
 TRAIN_END="2023-12-31 23:00:00+00:00"
 
 VAL_START="2024-01-01 00:00:00+00:00"
@@ -124,6 +124,10 @@ SCALER_TYPE="robust"
 LOSS_TYPE="huber"
 HUBER_DELTA=5.0
 
+# 是否构造 SE3-SE2 / SE4-SE2 价差特征
+USE_SPREAD="--use_spread"
+# USE_SPREAD="--no-use_spread"
+
 # ==============================================================================
 # 7. 评估参数配置
 # ==============================================================================
@@ -147,7 +151,7 @@ SEED=42                   # 随机种子
 # DEVICES="auto"
 
 # 单卡训练（推荐，有GPU时取消注释并注释上面两行）
-GPU_IDS="0"
+GPU_IDS="7"
 ACCELERATOR="gpu"
 DEVICES="1"
 
@@ -252,6 +256,7 @@ python $TRAIN_SCRIPT \
     --nf_scaler_type "$SCALER_TYPE" \
     --loss_type "$LOSS_TYPE" \
     --huber_delta $HUBER_DELTA \
+    $USE_SPREAD \
     \
     --eval_step_size $EVAL_STEP_SIZE \
     $SKIP_VAL_CV \

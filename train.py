@@ -377,6 +377,7 @@ def main(args) -> None:
         csv_sep=args.csv_sep,
         csv_encoding=args.csv_encoding,
         exog_configs=json.loads(args.exog_configs),
+        use_spread=args.use_spread,
     )
 
     data = builder.load(use_exog=args.use_exog)
@@ -395,6 +396,7 @@ def main(args) -> None:
     print(f"目标小时数   : {args.target_hours}")
     print(f"模型 horizon : {model_h}")
     print(f"使用外生变量 : {args.use_exog}")
+    print(f"使用价差特征 : {args.use_spread}")
     print(f"未来外生变量列 : {data.futr_exog_cols}")
     print(f"历史外生变量列 : {data.hist_exog_cols}")
     print(f"GPU 索引     : {args.gpu_ids or os.environ.get('CUDA_VISIBLE_DEVICES', '未设置')}")
@@ -564,6 +566,12 @@ def build_parser():
         action=argparse.BooleanOptionalAction,
         default=True,
         help="是否使用时间特征作为未来外生变量（PatchTST 会自动不使用）"
+    )
+    parser.add_argument(
+        "--use_spread",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="是否构造 SE3-SE2 / SE4-SE2 价差特征（需 SE3/SE4 外生变量）"
     )
 
     # ========== NeuralForecast 训练参数 ==========

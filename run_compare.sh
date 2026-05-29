@@ -43,6 +43,10 @@ MONTEL_POSTFIX_CSV="./sourceData/SE2_Price_Spot_EUR_MWh_H_Forecast/forecast_issu
 #   - 12 点发布 → begin 是后日 00:00（target_start_days=2）
 INSURED_TIME=0
 
+# 是否构造 SE3-SE2 / SE4-SE2 价差特征
+USE_SPREAD="--use_spread"
+# USE_SPREAD="--no-use_spread"
+
 # 真实电价数据文件
 ACTUAL_CSV="./sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 
@@ -173,7 +177,8 @@ python3 "$COMPARE_SCRIPT" \
     --out_dir "$OUT_DIR" \
     --csv_sep "$CSV_SEP" \
     --csv_encoding "$CSV_ENCODING" \
-    --exog_configs "$EXOG_CONFIGS"
+    --exog_configs "$EXOG_CONFIGS" \
+    $USE_SPREAD
 
 # 检查是否成功
 if [ $? -eq 0 ]; then

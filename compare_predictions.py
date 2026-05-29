@@ -632,9 +632,9 @@ def main(args):
         for col in exog_loader.feat_cols:
             actual_df[col] = exog_feats[col].values
 
-        if "feat_SE3" in actual_df.columns:
+        if args.use_spread and "feat_SE3" in actual_df.columns:
             actual_df["feat_SE3_SE2_spread"] = actual_df["feat_SE3"] - actual_df["y"]
-        if "feat_SE4" in actual_df.columns:
+        if args.use_spread and "feat_SE4" in actual_df.columns:
             actual_df["feat_SE4_SE2_spread"] = actual_df["feat_SE4"] - actual_df["y"]
 
         print(f"   外部外生变量: {exog_loader.feat_cols}")
@@ -839,6 +839,12 @@ def build_parser():
     parser.add_argument(
         "--exog_configs", type=str, default="[]",
         help="外部外生变量配置，JSON 格式"
+    )
+    parser.add_argument(
+        "--use_spread",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="是否构造 SE3-SE2 / SE4-SE2 价差特征"
     )
 
     return parser
