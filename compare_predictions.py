@@ -606,17 +606,6 @@ def main(args):
         )
     print(f"   Montel 记录数: {len(montel_df)}")
 
-    # 从预测文件中提取时间范围，用于裁剪 Montel 和实际数据
-    pred_ds = pd.to_datetime(pred_df["ds_utc"], utc=True)
-    t_min, t_max = pred_ds.min(), pred_ds.max()
-
-    if not montel_df.empty:
-        montel_ds = pd.to_datetime(montel_df["ds_utc"], utc=True)
-        t_min = max(t_min, montel_ds.min())
-        t_max = min(t_max, montel_ds.max())
-        montel_df = montel_df[montel_ds.between(t_min, t_max)].copy()
-        print(f"   裁剪后 Montel 记录数: {len(montel_df)} (ds_utc: {t_min} ~ {t_max})")
-
     # 4. 加载真实电价
     print(f"\n4. 加载真实电价文件: {args.actual_csv}")
     actual_df = load_actual_price(
@@ -627,10 +616,6 @@ def main(args):
         csv_encoding=args.csv_encoding,
     )
     print(f"   真实电价记录数: {len(actual_df)}")
-
-    # 裁剪实际数据到预测时间范围
-    actual_df = actual_df[(actual_df["ds_utc"] >= t_min) & (actual_df["ds_utc"] <= t_max)].copy()
-    print(f"   裁剪后真实电价记录数: {len(actual_df)}")
 
     exog_configs = json.loads(args.exog_configs)
     if exog_configs:

@@ -356,11 +356,28 @@ class PriceDatasetBuilder:
         if not self.exog_configs:
             return df
 
+        n_before = len(df)
+        t_before_min = df["ds_utc"].min()
+        t_before_max = df["ds_utc"].max()
+        print(f"\n[数据对齐] SE2 基准时间范围  : {t_before_min} ~ {t_before_max}  ({n_before} 行)")
+
         loader = self.get_exog_loader()
+
+        print(f"[数据对齐] 外生变量列表      : {loader.feat_cols}")
+        for name in loader._exog_names:
+            exog_df = loader._exog_dfs[name]
+            print(f"           {name:20s}: {exog_df['ds_utc'].iloc[0]} ~ {exog_df['ds_utc'].iloc[-1]}  ({len(exog_df)} 行)")
 
         common_ds_utc = loader.find_common_range(df["ds_utc"])
         t_min, t_max = common_ds_utc.min(), common_ds_utc.max()
         df = df[(df["ds_utc"] >= t_min) & (df["ds_utc"] <= t_max)].reset_index(drop=True)
+
+        n_after = len(df)
+        print(f"[数据对齐] 裁剪后时间范围    : {t_min} ~ {t_max}  ({n_after} 行)")
+        if n_before != n_after:
+            removed_before = int((df["ds_utc"].iloc[0] - t_before_min).total_seconds() / 3600)
+            removed_after = int((t_before_max - df["ds_utc"].iloc[-1]).total_seconds() / 3600)
+            print(f"[数据对齐] 丢弃了开头 {removed_before}h + 末尾 {removed_after}h")
 
         exog_feats = loader.load_features(
             df["ds_utc"],
