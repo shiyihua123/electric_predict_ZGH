@@ -64,6 +64,22 @@ EXOG_SE2_SE3_FLOW_CSV=""
 EXOG_SE3_SE2_NTC_CSV=""
 EXOG_SE3_SE2_FLOW_CSV=""
 
+# SE2 跨境物理流
+EXOG_SE2_NO4_FLOW_CSV=""
+EXOG_SE2_NO3_FLOW_CSV=""
+EXOG_SE2_SE1_FLOW_CSV=""
+
+# SE2 净进口/净出口
+EXOG_SE2_NET_IMPORT_CSV=""
+EXOG_SE2_NET_EXPORT_CSV=""
+
+# 瑞典全国负荷
+EXOG_SE_CONSUMPTION_CSV=""
+EXOG_SE_RESIDUAL_LOAD_CSV=""
+
+# SE2 其他能源产电（2021-12-15起，数据太短暂不用）
+# EXOG_SE2_OTHER_POWER_CSV=""
+
 # ==============================================================================
 # 3. 数据列配置（自动检测，一般不需要修改）
 # ==============================================================================
@@ -156,6 +172,14 @@ for path, name in [
     ('${EXOG_SE2_SE3_FLOW_CSV:-}', 'SE2_SE3_FLOW'),
     ('${EXOG_SE3_SE2_NTC_CSV:-}', 'SE3_SE2_NTC'),
     ('${EXOG_SE3_SE2_FLOW_CSV:-}', 'SE3_SE2_FLOW'),
+    ('${EXOG_SE2_NO4_FLOW_CSV:-}', 'SE2_NO4_FLOW'),
+    ('${EXOG_SE2_NO3_FLOW_CSV:-}', 'SE2_NO3_FLOW'),
+    ('${EXOG_SE2_SE1_FLOW_CSV:-}', 'SE2_SE1_FLOW'),
+    ('${EXOG_SE2_NET_IMPORT_CSV:-}', 'SE2_NET_IMPORT'),
+    ('${EXOG_SE2_NET_EXPORT_CSV:-}', 'SE2_NET_EXPORT'),
+    ('${EXOG_SE_CONSUMPTION_CSV:-}', 'SE_CONSUMPTION'),
+    ('${EXOG_SE_RESIDUAL_LOAD_CSV:-}', 'SE_RESIDUAL_LOAD'),
+    ('${EXOG_SE2_OTHER_POWER_CSV:-}', 'SE2_OTHER_POWER'),
 ]:
     if not path:
         continue

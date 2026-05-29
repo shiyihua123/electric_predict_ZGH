@@ -93,6 +93,22 @@ EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min
 EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
 EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+
+# SE2 跨境物理流
+EXOG_SE2_NO4_FLOW_CSV="sourceData/SE2_NO4_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NO3_FLOW_CSV="sourceData/SE2_NO3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SE1_FLOW_CSV="sourceData/SE2_SE1_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+
+# SE2 净进口/净出口
+EXOG_SE2_NET_IMPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_Import_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NET_EXPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_export_MWh_h_H_Actual/MW_latest.csv"
+
+# 瑞典全国负荷
+EXOG_SE_CONSUMPTION_CSV="sourceData/SE_Consumption_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE_RESIDUAL_LOAD_CSV="sourceData/SE_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
+
+# SE2 其他能源产电（2021-12-15起，数据太短暂不用）
+# EXOG_SE2_OTHER_POWER_CSV="sourceData/SE2_Other_Power_Production_MWh_h_H_Actual/MW_latest.csv"
 # ==============================================================================
 # 5. 模型配置
 # ==============================================================================
@@ -212,6 +228,14 @@ for path, name in [
     ('${EXOG_SE2_SE3_FLOW_CSV:-}', 'SE2_SE3_FLOW'),
     ('${EXOG_SE3_SE2_NTC_CSV:-}', 'SE3_SE2_NTC'),
     ('${EXOG_SE3_SE2_FLOW_CSV:-}', 'SE3_SE2_FLOW'),
+    ('${EXOG_SE2_NO4_FLOW_CSV:-}', 'SE2_NO4_FLOW'),
+    ('${EXOG_SE2_NO3_FLOW_CSV:-}', 'SE2_NO3_FLOW'),
+    ('${EXOG_SE2_SE1_FLOW_CSV:-}', 'SE2_SE1_FLOW'),
+    ('${EXOG_SE2_NET_IMPORT_CSV:-}', 'SE2_NET_IMPORT'),
+    ('${EXOG_SE2_NET_EXPORT_CSV:-}', 'SE2_NET_EXPORT'),
+    ('${EXOG_SE_CONSUMPTION_CSV:-}', 'SE_CONSUMPTION'),
+    ('${EXOG_SE_RESIDUAL_LOAD_CSV:-}', 'SE_RESIDUAL_LOAD'),
+    ('${EXOG_SE2_OTHER_POWER_CSV:-}', 'SE2_OTHER_POWER'),
 ]:
     if not path:
         continue
