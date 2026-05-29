@@ -89,10 +89,10 @@ EXOG_SE2_CONSUMPTION_CSV="sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.cs
 EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
 
 # EXOG_SE2_HYDRO_CSV="sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
-# EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_sum.csv"
-# EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-# EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_sum.csv"
-# EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 # ==============================================================================
 # 5. 模型配置
 # ==============================================================================
@@ -152,7 +152,7 @@ SEED=42                   # 随机种子
 # DEVICES="auto"
 
 # 单卡训练（推荐，有GPU时取消注释并注释上面两行）
-GPU_IDS="7"
+GPU_IDS="5"
 ACCELERATOR="gpu"
 DEVICES="1"
 
