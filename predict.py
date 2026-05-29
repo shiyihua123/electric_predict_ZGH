@@ -91,6 +91,12 @@ def build_parser():
         "--exog_configs", type=str, default="[]",
         help="外部外生变量配置，JSON 格式，如 '[{\"csv_path\":\"...\",\"name\":\"SE3\"}]'"
     )
+    parser.add_argument(
+        "--use_spread",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="是否构造 SE3-SE2 / SE4-SE2 价差特征"
+    )
 
     return parser
 
@@ -168,6 +174,7 @@ def main():
         train_start="2000-01-01 00:00:00+00:00",
         test_end="2099-12-31 23:00:00+00:00",
         exog_configs=exog_configs,
+        use_spread=args.use_spread,
     )
 
     data = builder.load(use_exog=True)

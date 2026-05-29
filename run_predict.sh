@@ -42,6 +42,10 @@ EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_lates
 # EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 OUT_CSV=""
 
+# 是否构造 SE3-SE2 / SE4-SE2 价差特征
+USE_SPREAD="--use_spread"
+# USE_SPREAD="--no-use_spread"
+
 # ========== 解析命令行参数 ==========
 print_help() {
     cat << EOF
@@ -227,7 +231,8 @@ PREDICT_ARGS=(
     --insured_time "$INSURED_TIME"
     --target_hours "$TARGET_HOURS"
     --out_csv "$OUT_CSV"
-    --exog_configs "$EXOG_CONFIGS"
+    --exog_configs "$EXOG_CONFIGS" \
+    $USE_SPREAD
 )
 
 python3 predict.py "${PREDICT_ARGS[@]}"
