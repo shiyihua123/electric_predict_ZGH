@@ -15,11 +15,11 @@
 
 使用方法：
     python predict.py \
-        --data_path ./sourceData/.../data.csv \
-        --model_dir ./outputs/nhits_tcn_patchtst/neuralforecast_bundle \
+        --data_path <path> \
+        --model_dir <path> \
         --insured_time 0 \
         --target_hours 120 \
-        --out_csv ./predictions_business.csv
+        --out_csv <path>
 """
 
 import argparse
@@ -30,6 +30,9 @@ import warnings
 import pandas as pd
 
 warnings.filterwarnings("ignore", ".*isinstance\\(treespec, LeafSpec\\).*")
+
+# 项目根目录
+_BASE_DIR = Path(__file__).resolve().parent.parent
 
 from neuralforecast import NeuralForecast
 
@@ -83,7 +86,7 @@ def build_parser():
     )
 
     parser.add_argument(
-        "--out_csv", type=str, default="./predictions_business.csv",
+        "--out_csv", type=str, default=str(_BASE_DIR / "predictions_business.csv"),
         help="输出 CSV 文件路径"
     )
 

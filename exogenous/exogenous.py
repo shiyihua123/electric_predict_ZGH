@@ -15,6 +15,9 @@ from typing import List, Optional, Union
 import numpy as np
 import pandas as pd
 
+# 项目根目录
+_BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 def load_exog_csv(
     csv_path: str,
@@ -144,7 +147,7 @@ class ExogenousLoader:
     用法：
         loader = ExogenousLoader([
             {
-                "csv_path": "sourceData/.../SE3_price.csv",
+                "csv_path": "<path_to_SE3_price.csv>",
                 "name": "SE3",
             },
         ])

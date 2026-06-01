@@ -16,28 +16,29 @@
 # 1. 基础配置
 # ==============================================================================
 
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 项目根目录（script 的父目录）
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # 训练脚本路径
-TRAIN_SCRIPT="main.py"
+TRAIN_SCRIPT="${PROJECT_DIR}/py_file/main.py"
 
 # 版本名称（输出到 outputs/<VERSION>/ 下）
 VERSION="my_new_experiment"
 # 删除旧版本输出目录
-rm -rf "./outputs/${VERSION}"
+rm -rf "${PROJECT_DIR}/outputs/${VERSION}"
 # 输出目录（会自动创建）
-OUT_DIR="./outputs/${VERSION}/models_results"
+OUT_DIR="${PROJECT_DIR}/outputs/${VERSION}/models_results"
 
 # ==============================================================================
 # 2. 数据配置
 # ==============================================================================
 
 # 数据文件路径
-DATA_PATH="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+DATA_PATH="${PROJECT_DIR}/sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 
 # 列名配置
 DATE_COL="date"           # 时间列名
-TARGET_COL="price"        # 目标列名（价格）
+TARGET_COL="value"        # 目标列名（价格）
 UNIQUE_ID="SE2"           # 时间序列标识
 
 # 文件格式配置
@@ -58,7 +59,8 @@ VAL_START="2025-01-01 00:00:00+00:00"
 VAL_END="2025-12-31 23:00:00+00:00"
 
 TEST_START="2026-01-01 00:00:00+00:00"
-TEST_END="$(date +%Y-%m-%d) 00:00:00+00:00"
+# TEST_END="$(date +%Y-%m-%d) 00:00:00+00:00"
+TEST_END="2026-06-01 23:00:00+00:00"
 
 # ==============================================================================
 # 4. 业务预测任务配置
@@ -80,35 +82,35 @@ INSURED_TIME=0
 TARGET_HOURS=1056
 
 # 外部外生变量
-EXOG_SE3_CSV="sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
-EXOG_SE1_CSV="sourceData/SE1_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
-EXOG_SE4_CSV="sourceData/SE4_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
-EXOG_SE2_WIND_CSV="sourceData/SE2_Wind_Power_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SOLAR_CSV="sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_CONSUMPTION_CSV="sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE3_CSV="${PROJECT_DIR}/sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE1_CSV="${PROJECT_DIR}/sourceData/SE1_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE4_CSV="${PROJECT_DIR}/sourceData/SE4_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
+EXOG_SE2_WIND_CSV="${PROJECT_DIR}/sourceData/SE2_Wind_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SOLAR_CSV="${PROJECT_DIR}/sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_CONSUMPTION_CSV="${PROJECT_DIR}/sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_RESIDUAL_LOAD_CSV="${PROJECT_DIR}/sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
 
-# EXOG_SE2_HYDRO_CSV="sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
-EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
-EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_HYDRO_CSV="${PROJECT_DIR}/sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SE3_NTC_CSV="${PROJECT_DIR}/sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+EXOG_SE2_SE3_FLOW_CSV="${PROJECT_DIR}/sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE3_SE2_NTC_CSV="${PROJECT_DIR}/sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+EXOG_SE3_SE2_FLOW_CSV="${PROJECT_DIR}/sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 
 # SE2 跨境物理流
-EXOG_SE2_NO4_FLOW_CSV="sourceData/SE2_NO4_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_NO3_FLOW_CSV="sourceData/SE2_NO3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SE1_FLOW_CSV="sourceData/SE2_SE1_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NO4_FLOW_CSV="${PROJECT_DIR}/sourceData/SE2_NO4_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NO3_FLOW_CSV="${PROJECT_DIR}/sourceData/SE2_NO3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_SE1_FLOW_CSV="${PROJECT_DIR}/sourceData/SE2_SE1_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 
 # SE2 净进口/净出口
-EXOG_SE2_NET_IMPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_Import_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_NET_EXPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_export_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NET_IMPORT_CSV="${PROJECT_DIR}/sourceData/SE2_Exchange_Physical_Flow_Net_Import_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE2_NET_EXPORT_CSV="${PROJECT_DIR}/sourceData/SE2_Exchange_Physical_Flow_Net_export_MWh_h_H_Actual/MW_latest.csv"
 
 # 瑞典全国负荷
-EXOG_SE_CONSUMPTION_CSV="sourceData/SE_Consumption_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE_RESIDUAL_LOAD_CSV="sourceData/SE_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE_CONSUMPTION_CSV="${PROJECT_DIR}/sourceData/SE_Consumption_MWh_h_H_Actual/MW_latest.csv"
+EXOG_SE_RESIDUAL_LOAD_CSV="${PROJECT_DIR}/sourceData/SE_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
 
-# SE2 其他能源产电（2021-12-15起，数据太短暂不用）
-# EXOG_SE2_OTHER_POWER_CSV="sourceData/SE2_Other_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+# SE2 其他能源产电（2021-12-15 起，数据太短暂不用）
+# EXOG_SE2_OTHER_POWER_CSV="${PROJECT_DIR}/sourceData/SE2_Other_Power_Production_MWh_h_H_Actual/MW_latest.csv"
 # ==============================================================================
 # 5. 模型配置
 # ==============================================================================
@@ -168,7 +170,7 @@ SEED=42                   # 随机种子
 # DEVICES="auto"
 
 # 单卡训练（推荐，有GPU时取消注释并注释上面两行）
-GPU_IDS="5"
+GPU_IDS="3"
 ACCELERATOR="gpu"
 DEVICES="1"
 

@@ -29,6 +29,9 @@ import warnings
 
 warnings.filterwarnings("ignore", ".*isinstance\\(treespec, LeafSpec\\).*")
 
+# 项目根目录
+_BASE_DIR = Path(__file__).resolve().parent.parent
+
 from neuralforecast import NeuralForecast
 from neuralforecast.losses.pytorch import MAE, HuberLoss
 from neuralforecast.models import NHITS, PatchTST, TCN, NBEATSx, TiDE
@@ -252,7 +255,7 @@ def run_cv_for_split(
     raw_size = count_rows_between(df_cv, eval_start_utc, eval_end_utc)
 
     test_size = adjusted_test_size(raw_size, model_h, args.eval_step_size, split_name)
-
+    
     print(f"\n========== {split_name.upper()} CV ==========")
     print(f"评估开始时间       : {eval_start_utc}")
     print(f"评估结束时间       : {eval_end_utc}")
@@ -312,10 +315,10 @@ def run_cv_for_split(
     print(f"业务窗口发布天数   : {cv_business['issued_utc'].nunique()}")
     print(f"发布时间点分布     : {cv_business['issued_hour_local'].value_counts().to_dict()}")
 
-    if save_model:
-        model_bundle_dir = out_dir / "neuralforecast_bundle"
-        nf.save(str(model_bundle_dir), overwrite=True)
-        print(f"NeuralForecast 模型已保存到: {model_bundle_dir}")
+    # if save_model:
+    #     model_bundle_dir = out_dir / "neuralforecast_bundle"
+    #     nf.save(str(model_bundle_dir), overwrite=True)
+    #     print(f"NeuralForecast 模型已保存到: {model_bundle_dir}")
 
     return cv_business, nf
 
@@ -358,7 +361,7 @@ def main(args) -> None:
         print(f"  last_target_horizon: {cfg['last_target_horizon']}")
         print(f"  model_h_required: {cfg['model_h_required']}")
     print(f"模型 horizon : {model_h}")
-
+    
     builder = PriceDatasetBuilder(
         excel_path=args.excel_path,
         date_col=args.date_col,
@@ -403,10 +406,10 @@ def main(args) -> None:
     print(f"加速器类型   : {args.accelerator}")
     print(f"设备数量     : {args.devices}")
 
-    data.full_df.to_csv(out_dir / "prepared_full_df.csv", index=False)
-    data.train_df.to_csv(out_dir / "prepared_train_df.csv", index=False)
-    data.val_df.to_csv(out_dir / "prepared_val_df.csv", index=False)
-    data.test_df.to_csv(out_dir / "prepared_test_df.csv", index=False)
+    # data.full_df.to_csv(out_dir / "prepared_full_df.csv", index=False)
+    # data.train_df.to_csv(out_dir / "prepared_train_df.csv", index=False)
+    # data.val_df.to_csv(out_dir / "prepared_val_df.csv", index=False)
+    # data.test_df.to_csv(out_dir / "prepared_test_df.csv", index=False)
 
     all_business = []
 
@@ -419,7 +422,7 @@ def main(args) -> None:
             split_name="val",
             df=data.full_df,
             eval_start_utc=bounds["val_start"],
-            eval_end_utc=bounds["val_end"],
+            eval_end_utc=bounds["test_end"],
             val_size=internal_val_size,
             args=args,
             futr_exog_cols=data.futr_exog_cols,
@@ -430,20 +433,20 @@ def main(args) -> None:
         )
         all_business.append(val_business)
 
-    test_business, _ = run_cv_for_split(
-        split_name="test",
-        df=data.full_df,
-        eval_start_utc=bounds["test_start"],
-        eval_end_utc=bounds["test_end"],
-        val_size=data.val_size,
-        args=args,
-        futr_exog_cols=data.futr_exog_cols,
-        hist_exog_cols=data.hist_exog_cols,
-        model_h=model_h,
-        out_dir=out_dir,
-        save_model=True,
-    )
-    all_business.append(test_business)
+    # test_business, _ = run_cv_for_split(
+    #     split_name="test",
+    #     df=data.full_df,
+    #     eval_start_utc=bounds["test_start"],
+    #     eval_end_utc=bounds["test_end"],
+    #     val_size=data.val_size,
+    #     args=args,
+    #     futr_exog_cols=data.futr_exog_cols,
+    #     hist_exog_cols=data.hist_exog_cols,
+    #     model_h=model_h,
+    #     out_dir=out_dir,
+    #     save_model=True,
+    # )
+    # all_business.append(test_business)
 
     pred_df = pd.concat(all_business, ignore_index=True)
 
@@ -456,18 +459,18 @@ def main(args) -> None:
     model_cols = infer_model_cols(pred_df)
 
     metrics_summary = summarize_overall(pred_df, model_cols)
-    metrics_by_issued_day = summarize_by_issued_day(pred_df, model_cols)
-    metrics_by_target_date = summarize_by_target_date(pred_df, model_cols)
-    metrics_by_forecast_day = summarize_by_forecast_day(pred_df, model_cols)
-    metrics_by_horizon = summarize_by_horizon(pred_df, model_cols)
-    metrics_by_issued_hour = summarize_by_issued_hour(pred_df, model_cols)
+    # metrics_by_issued_day = summarize_by_issued_day(pred_df, model_cols)
+    # metrics_by_target_date = summarize_by_target_date(pred_df, model_cols)
+    # metrics_by_forecast_day = summarize_by_forecast_day(pred_df, model_cols)
+    # metrics_by_horizon = summarize_by_horizon(pred_df, model_cols)
+    # metrics_by_issued_hour = summarize_by_issued_hour(pred_df, model_cols)
 
     metrics_summary.to_csv(out_dir / "metrics_summary.csv", index=False)
-    metrics_by_issued_day.to_csv(out_dir / "metrics_by_issued_day.csv", index=False)
-    metrics_by_target_date.to_csv(out_dir / "metrics_by_target_date.csv", index=False)
-    metrics_by_forecast_day.to_csv(out_dir / "metrics_by_forecast_day.csv", index=False)
-    metrics_by_horizon.to_csv(out_dir / "metrics_by_horizon.csv", index=False)
-    metrics_by_issued_hour.to_csv(out_dir / "metrics_by_issued_hour.csv", index=False)
+    # metrics_by_issued_day.to_csv(out_dir / "metrics_by_issued_day.csv", index=False)
+    # metrics_by_target_date.to_csv(out_dir / "metrics_by_target_date.csv", index=False)
+    # metrics_by_forecast_day.to_csv(out_dir / "metrics_by_forecast_day.csv", index=False)
+    # metrics_by_horizon.to_csv(out_dir / "metrics_by_horizon.csv", index=False)
+    # metrics_by_issued_hour.to_csv(out_dir / "metrics_by_issued_hour.csv", index=False)
 
     config = vars(args).copy()
     config["business_configs"] = {k: v for k, v in configs.items()}
@@ -476,18 +479,18 @@ def main(args) -> None:
 
     print("\n========== 指标摘要 ==========")
     print(metrics_summary)
-    print("\n========== 按发布时间点指标 ==========")
-    print(metrics_by_issued_hour)
-    print("\n========== 按预测天数指标 ==========")
-    print(metrics_by_forecast_day)
+    # print("\n========== 按发布时间点指标 ==========")
+    # print(metrics_by_issued_hour)
+    # print("\n========== 按预测天数指标 ==========")
+    # print(metrics_by_forecast_day)
     print("\n========== 输出文件 ==========")
     print(out_dir / "predictions_business.csv")
     print(out_dir / "metrics_summary.csv")
-    print(out_dir / "metrics_by_issued_hour.csv")
-    print(out_dir / "metrics_by_issued_day.csv")
-    print(out_dir / "metrics_by_target_date.csv")
-    print(out_dir / "metrics_by_forecast_day.csv")
-    print(out_dir / "metrics_by_horizon.csv")
+    # print(out_dir / "metrics_by_issued_hour.csv")
+    # print(out_dir / "metrics_by_issued_day.csv")
+    # print(out_dir / "metrics_by_target_date.csv")
+    # print(out_dir / "metrics_by_forecast_day.csv")
+    # print(out_dir / "metrics_by_horizon.csv")
     print(f"\n完成！结果已保存到: {out_dir}")
 
 
@@ -499,7 +502,7 @@ def build_parser():
     parser.add_argument(
         "--excel_path",
         type=str,
-        default="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv",
+        default=str(_BASE_DIR / "sourceData" / "SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual" / "actual_min_to_H_true_latest.csv"),
         help="CSV / Excel 数据文件路径"
     )
     parser.add_argument("--date_col", type=str, default="date", help="时间列名")
@@ -623,7 +626,7 @@ def build_parser():
 
     # ========== GPU / 系统参数 ==========
     parser.add_argument("--seed", type=int, default=42, help="随机种子")
-    parser.add_argument("--out_dir", type=str, default="./outputs/nhits_tcn_patchtst", help="输出目录")
+    parser.add_argument("--out_dir", type=str, default=str(_BASE_DIR / "outputs" / "nhits_tcn_patchtst"), help="输出目录")
     parser.add_argument(
         "--gpu_ids",
         type=str,

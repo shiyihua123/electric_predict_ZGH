@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pandas as pd
 
-_BASE_DIR = Path(__file__).resolve().parent
+_BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def build_parser():

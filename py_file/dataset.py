@@ -9,12 +9,17 @@
 4. 按时间切分训练/验证/测试集
 """
 
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
+
+# 添加项目根目录到 Python 路径，以便导入 exogenous 模块
+_BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(_BASE_DIR))
 
 from exogenous import ExogenousLoader
 

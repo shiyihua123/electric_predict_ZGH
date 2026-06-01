@@ -41,7 +41,10 @@ Shenzhen University"""
 
 # 附件路径列表，没有附件请留空：[]
 # 读取 outputs/commits 下的所有文件
-folder = "./outputs/commits"
+# 获取项目根目录
+import pathlib
+_BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+folder = str(_BASE_DIR / "outputs" / "commits")
 attachment_files = [
     os.path.join(folder, f)
     for f in os.listdir(folder)

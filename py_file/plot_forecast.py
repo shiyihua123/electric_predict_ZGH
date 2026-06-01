@@ -16,6 +16,9 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# 项目根目录
+_BASE_DIR = Path(__file__).resolve().parent.parent
+
 H_COL_RE = re.compile(r"^h(\d+)$", re.IGNORECASE)
 
 
@@ -71,7 +74,7 @@ def build_parser():
         help="Custom label for model predictions in legend (default: original model name)",
     )
     parser.add_argument(
-        "--out_dir", type=str, default="./outputs/commits",
+        "--out_dir", type=str, default=str(_BASE_DIR / "outputs" / "commits"),
         help="Output directory for saved plots",
     )
     parser.add_argument(
