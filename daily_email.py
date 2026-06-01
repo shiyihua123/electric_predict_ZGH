@@ -15,8 +15,8 @@ password = "fpcgikhwwbziccje"
 
 # 收件人列表，会逐一发送
 receiver_list = [
-    "2254225117@qq.com",
     "1960622591@qq.com",
+    "2254225117@qq.com",
     "Milad.Mousavi@cgnee.com",
     "Zilin.Wang@cgnee.com",
     "wenyu.cao@cgnee.com",
@@ -40,8 +40,8 @@ Electricity Price Forecasting Team
 Shenzhen University"""
 
 # 附件路径列表，没有附件请留空：[]
-# 读取 outputs/commits 下的所有文件
-folder = "./outputs/commits"
+# 读取 outputs/my_new_experiment/commits 下的所有文件
+folder = "./outputs/my_new_experiment/commits"
 attachment_files = [
     os.path.join(folder, f)
     for f in os.listdir(folder)

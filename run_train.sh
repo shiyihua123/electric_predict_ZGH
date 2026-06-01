@@ -58,7 +58,8 @@ VAL_START="2025-01-01 00:00:00+00:00"
 VAL_END="2025-12-31 23:00:00+00:00"
 
 TEST_START="2026-01-01 00:00:00+00:00"
-TEST_END="$(date +%Y-%m-%d) 00:00:00+00:00"
+# TEST_END="$(date +%Y-%m-%d) 00:00:00+00:00"
+TEST_END="2026-06-01 00:00:00+00:00"
 
 # ==============================================================================
 # 4. 业务预测任务配置
@@ -83,29 +84,29 @@ TARGET_HOURS=1056
 EXOG_SE3_CSV="sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 EXOG_SE1_CSV="sourceData/SE1_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 EXOG_SE4_CSV="sourceData/SE4_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
-EXOG_SE2_WIND_CSV="sourceData/SE2_Wind_Power_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SOLAR_CSV="sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_CONSUMPTION_CSV="sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_WIND_CSV="sourceData/SE2_Wind_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_SOLAR_CSV="sourceData/SE2_Solar_Photovoltaic_Production_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_CONSUMPTION_CSV="sourceData/SE2_Consumption_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_RESIDUAL_LOAD_CSV="sourceData/SE2_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
 
-# EXOG_SE2_HYDRO_CSV="sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
-EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
-EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# # EXOG_SE2_HYDRO_CSV="sourceData/SE2_Hydro_Power_Production_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_SE3_NTC_CSV="sourceData/SE2_SE3_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+# EXOG_SE2_SE3_FLOW_CSV="sourceData/SE2_SE3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE3_SE2_NTC_CSV="sourceData/SE3_SE2_Exchange_Net_Transfer_Capacity_MW_15min_REMIT/MW_latest_H_mean.csv"
+# EXOG_SE3_SE2_FLOW_CSV="sourceData/SE3_SE2_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 
-# SE2 跨境物理流
-EXOG_SE2_NO4_FLOW_CSV="sourceData/SE2_NO4_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_NO3_FLOW_CSV="sourceData/SE2_NO3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_SE1_FLOW_CSV="sourceData/SE2_SE1_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# # SE2 跨境物理流
+# EXOG_SE2_NO4_FLOW_CSV="sourceData/SE2_NO4_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_NO3_FLOW_CSV="sourceData/SE2_NO3_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_SE1_FLOW_CSV="sourceData/SE2_SE1_Exchange_Physical_Flow_MWh_h_H_Actual/MW_latest.csv"
 
-# SE2 净进口/净出口
-EXOG_SE2_NET_IMPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_Import_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE2_NET_EXPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_export_MWh_h_H_Actual/MW_latest.csv"
+# # SE2 净进口/净出口
+# EXOG_SE2_NET_IMPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_Import_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE2_NET_EXPORT_CSV="sourceData/SE2_Exchange_Physical_Flow_Net_export_MWh_h_H_Actual/MW_latest.csv"
 
-# 瑞典全国负荷
-EXOG_SE_CONSUMPTION_CSV="sourceData/SE_Consumption_MWh_h_H_Actual/MW_latest.csv"
-EXOG_SE_RESIDUAL_LOAD_CSV="sourceData/SE_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
+# # 瑞典全国负荷
+# EXOG_SE_CONSUMPTION_CSV="sourceData/SE_Consumption_MWh_h_H_Actual/MW_latest.csv"
+# EXOG_SE_RESIDUAL_LOAD_CSV="sourceData/SE_Residual_Load_MWh_h_H_Actual/MW_latest.csv"
 
 # SE2 其他能源产电（2021-12-15起，数据太短暂不用）
 # EXOG_SE2_OTHER_POWER_CSV="sourceData/SE2_Other_Power_Production_MWh_h_H_Actual/MW_latest.csv"
@@ -168,7 +169,7 @@ SEED=42                   # 随机种子
 # DEVICES="auto"
 
 # 单卡训练（推荐，有GPU时取消注释并注释上面两行）
-GPU_IDS="5"
+GPU_IDS="3"
 ACCELERATOR="gpu"
 DEVICES="1"
 
