@@ -67,7 +67,7 @@ TEST_END="2026-06-01 23:00:00+00:00"
 # ==============================================================================
 
 # 模型输入历史天数（建议 28 或 56）
-INPUT_DAYS=56
+INPUT_DAYS=7
 
 # 发布时区（瑞典时区）
 ISSUED_TZ="Europe/Stockholm"
@@ -79,7 +79,7 @@ ISSUED_TZ="Europe/Stockholm"
 INSURED_TIME=0
 
 # 预测小时数（5天 = 120小时）
-TARGET_HOURS=1056
+TARGET_HOURS=6
 
 # 外部外生变量
 EXOG_SE3_CSV="${PROJECT_DIR}/sourceData/SE3_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"

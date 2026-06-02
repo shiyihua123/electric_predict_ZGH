@@ -25,6 +25,11 @@ PRED_CSV="${PROJECT_DIR}/outputs/${VERSION}/models_results/predictions_business.
 # Montel 预测文件（当前只有 00 点发布的文件）
 MONTEL_CSV="${PROJECT_DIR}/sourceData/SE2_Price_Spot_EUR_MWh_H_Forecast/forecast_issued_00_prefix_latest_fix.csv"
 
+# 是否计算 Montel 指标（true/false）
+# 设置为 false 时只计算模型与真实值之间的指标
+# COMPARE_WITH_MONTEL="true"
+COMPARE_WITH_MONTEL="false"
+
 # 输出目录
 OUT_DIR="${PROJECT_DIR}/outputs/${VERSION}/comparison_results"
 
@@ -33,32 +38,41 @@ OUT_DIR="${PROJECT_DIR}/outputs/${VERSION}/comparison_results"
 # ==============================================================================
 
 echo "========================================"
-echo "  模型预测与 Montel 预测对比分析"
+echo "  模型预测对比分析"
 echo "========================================"
-echo "模型预测文件: $PRED_CSV"
-echo "Montel预测文件: $MONTEL_CSV"
-echo "输出目录: $OUT_DIR"
+echo "模型预测文件：$PRED_CSV"
+echo "对比 Montel: $COMPARE_WITH_MONTEL"
+echo "输出目录：$OUT_DIR"
 echo "========================================"
 
 # 检查文件是否存在
 if [ ! -f "$PRED_CSV" ]; then
-    echo "错误：模型预测文件不存在: $PRED_CSV"
+    echo "错误：模型预测文件不存在：$PRED_CSV"
     exit 1
 fi
 
-if [ ! -f "$MONTEL_CSV" ]; then
-    echo "错误：Montel预测文件不存在: $MONTEL_CSV"
-    exit 1
+if [ "$COMPARE_WITH_MONTEL" = "true" ]; then
+    if [ ! -f "$MONTEL_CSV" ]; then
+        echo "错误：Montel 预测文件不存在：$MONTEL_CSV"
+        exit 1
+    fi
+    echo "Montel 预测文件：$MONTEL_CSV"
 fi
 
 # 创建输出目录
 mkdir -p "$OUT_DIR"
 
 # 运行对比脚本
-"$PYTHON" "$COMPARE_SCRIPT" \
-    --pred_csv "$PRED_CSV" \
-    --montel_csv "$MONTEL_CSV" \
-    --out_dir "$OUT_DIR"
+if [ "$COMPARE_WITH_MONTEL" = "true" ]; then
+    "$PYTHON" "$COMPARE_SCRIPT" \
+        --pred_csv "$PRED_CSV" \
+        --montel_csv "$MONTEL_CSV" \
+        --out_dir "$OUT_DIR"
+else
+    "$PYTHON" "$COMPARE_SCRIPT" \
+        --pred_csv "$PRED_CSV" \
+        --out_dir "$OUT_DIR"
+fi
 
 # 检查是否成功
 if [ $? -eq 0 ]; then
@@ -66,7 +80,7 @@ if [ $? -eq 0 ]; then
     echo "========================================"
     echo "  对比分析完成！"
     echo "========================================"
-    echo "输出目录: $OUT_DIR"
+    echo "输出目录：$OUT_DIR"
 else
     echo ""
     echo "========================================"

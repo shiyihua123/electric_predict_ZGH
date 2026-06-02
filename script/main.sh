@@ -7,5 +7,5 @@ VERSION="my_new_experiment"
 # ============================================================
 # 条件判断参数
 # ============================================================
-# bash "script/run_train.sh"
+bash "script/run_train.sh"
 bash "script/run_compare.sh"
