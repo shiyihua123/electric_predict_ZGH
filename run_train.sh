@@ -37,7 +37,7 @@ DATA_PATH="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to
 
 # 列名配置
 DATE_COL="date"           # 时间列名
-TARGET_COL="price"        # 目标列名（价格）
+TARGET_COL="value"        # 目标列名（价格）
 UNIQUE_ID="SE2"           # 时间序列标识
 
 # 文件格式配置

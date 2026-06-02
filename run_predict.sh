@@ -13,7 +13,7 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ========== 默认值 ==========
 DATA_PATH="sourceData/SE2_Price_Spot_EUR_MWh_NordPool_15min_Actual/actual_min_to_H_true_latest.csv"
 DATE_COL="date"
-TARGET_COL="price"
+TARGET_COL="value"
 CSV_SEP=","
 CSV_ENCODING="utf-8"
 FREQ="h"
